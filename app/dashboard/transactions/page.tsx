@@ -57,16 +57,16 @@ export default function TransactionsPage() {
 
   const filteredTransactions = transactions.filter((t) => {
     if (filter === "all") return true;
-    return t.type === filter;
+    return t.type.toLowerCase() === filter;
   });
 
   // Calculate totals
   const totalIncome = transactions
-    .filter((t) => t.type === "income")
+    .filter((t) => t.type.toLowerCase() === "income")
     .reduce((sum, t) => sum + t.amount, 0);
 
   const totalExpenses = transactions
-    .filter((t) => t.type === "expense")
+    .filter((t) => t.type.toLowerCase() === "expense")
     .reduce((sum, t) => sum + t.amount, 0);
 
   const net = totalIncome - totalExpenses;
@@ -176,13 +176,13 @@ export default function TransactionsPage() {
                       <div className="flex items-center">
                         <div
                           className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
-                            transaction.type === "income"
+                            transaction.type.toLowerCase() === "income"
                               ? "bg-positive/10"
                               : "bg-neutral/10"
                           }`}
                         >
                           <span className="text-sm">
-                            {transaction.type === "income" ? "💰" : "💳"}
+                            {transaction.type.toLowerCase() === "income" ? "💰" : "💳"}
                           </span>
                         </div>
                         <span className="text-sm font-medium text-neutral">
@@ -198,12 +198,12 @@ export default function TransactionsPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`text-sm font-semibold ${
-                          transaction.type === "income"
+                          transaction.type.toLowerCase() === "income"
                             ? "text-positive"
                             : "text-negative"
                         }`}
                       >
-                        {transaction.type === "income" ? "+" : "-"}€
+                        {transaction.type.toLowerCase() === "income" ? "+" : "-"}€
                         {transaction.amount.toFixed(2)}
                       </span>
                     </td>
