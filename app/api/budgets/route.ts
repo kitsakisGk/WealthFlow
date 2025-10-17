@@ -38,10 +38,10 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { category, limit, period } = body;
+    const { category, amount, period } = body;
 
     // Validate required fields
-    if (!category || !limit || !period) {
+    if (!category || !amount || !period) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -51,9 +51,9 @@ export async function POST(req: NextRequest) {
     const budget = await prisma.budget.create({
       data: {
         category,
-        limit: parseFloat(limit),
+        amount: parseFloat(amount),
         period: period.toUpperCase(),
-        spent: 0,
+        startDate: new Date(),
         userId: session.user.id,
       },
     });

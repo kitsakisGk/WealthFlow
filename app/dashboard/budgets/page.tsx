@@ -6,9 +6,9 @@ import AddBudgetModal from "@/components/dashboard/AddBudgetModal";
 interface Budget {
   id: string;
   category: string;
-  limit: number;
-  spent: number;
+  amount: number;
   period: string;
+  startDate: string;
 }
 
 export default function BudgetsPage() {
@@ -53,8 +53,9 @@ export default function BudgetsPage() {
     }
   };
 
-  const totalAllocated = budgets.reduce((sum, b) => sum + b.limit, 0);
-  const totalSpent = budgets.reduce((sum, b) => sum + b.spent, 0);
+  const totalAllocated = budgets.reduce((sum, b) => sum + b.amount, 0);
+  // TODO: Calculate actual spent from transactions
+  const totalSpent = 0;
   const totalRemaining = totalAllocated - totalSpent;
 
   if (loading) {
@@ -137,10 +138,6 @@ export default function BudgetsPage() {
           {/* Budget Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {budgets.map((budget) => {
-              const percentUsed = (budget.spent / budget.limit) * 100;
-              const remaining = budget.limit - budget.spent;
-              const isOverBudget = budget.spent > budget.limit;
-
               return (
                 <div key={budget.id} className="bg-white rounded-lg shadow p-6">
                   <div className="flex items-start justify-between mb-4">
@@ -159,47 +156,23 @@ export default function BudgetsPage() {
                   <div className="space-y-3">
                     <div>
                       <div className="flex justify-between text-sm mb-2">
-                        <span className="text-neutral-light">Spent</span>
+                        <span className="text-neutral-light">Budget Amount</span>
                         <span className="font-semibold text-neutral">
-                          €{budget.spent.toFixed(2)} / €{budget.limit.toFixed(2)}
+                          €{budget.amount.toFixed(2)}
                         </span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-3">
-                        <div
-                          className={`h-3 rounded-full ${
-                            isOverBudget
-                              ? "bg-negative"
-                              : percentUsed > 80
-                              ? "bg-yellow-500"
-                              : "bg-positive"
-                          }`}
-                          style={{ width: `${Math.min(percentUsed, 100)}%` }}
-                        ></div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                      <div>
-                        <p className="text-xs text-neutral-light">Remaining</p>
-                        <p className={`text-lg font-bold ${remaining >= 0 ? "text-positive" : "text-negative"}`}>
-                          €{Math.abs(remaining).toFixed(2)}
-                          {isOverBudget && <span className="text-sm"> over</span>}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-neutral-light">Used</p>
-                        <p className="text-lg font-bold text-neutral">{percentUsed.toFixed(0)}%</p>
+                      <div className="flex justify-between text-xs text-neutral-light">
+                        <span>Started: {new Date(budget.startDate).toLocaleDateString()}</span>
+                        <span>Period: {budget.period.toLowerCase()}</span>
                       </div>
                     </div>
                   </div>
 
-                  {isOverBudget && (
-                    <div className="mt-4 bg-negative/10 border border-negative/20 rounded-lg p-3">
-                      <p className="text-sm text-negative font-medium">
-                        ⚠️ Over budget by €{Math.abs(remaining).toFixed(2)}
-                      </p>
-                    </div>
-                  )}
+                  <div className="mt-4 bg-primary/5 border border-primary/20 rounded-lg p-3">
+                    <p className="text-sm text-primary">
+                      💡 Track your spending in this category to see progress
+                    </p>
+                  </div>
                 </div>
               );
             })}
