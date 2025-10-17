@@ -112,27 +112,26 @@ wealthflow-system/
 
 ## Subscription Plans
 
-### Free Plan ($0/month)
-- Track up to 50 transactions/month
-- Basic budgeting
+### Free Plan (€0/month)
+- 1 transaction per month
+- 2 budgets
 - 1 financial goal
 - Basic reports
 
-### Pro Plan ($9.99/month)
+### Pro Plan (€4.99/month or €29.99/year)
 - Unlimited transactions
-- Advanced budgeting
+- Unlimited budgets
 - Unlimited goals
 - Advanced reports & charts
 - Export to PDF/Excel
 - Priority support
 
-### Business Plan ($19.99/month)
+### Business Plan (€19.99/month or €59.99/year)
 - Everything in Pro
 - Business expense tracking
-- Tax categorization
-- Invoice tracking
-- Multi-user access (up to 3)
-- Dedicated support
+- Custom categories
+- Priority support
+- Advanced reporting
 
 ## Stripe Setup
 
@@ -155,24 +154,27 @@ wealthflow-system/
 
 The app is optimized for Vercel with automatic deployments.
 
-## TODO / Next Steps
+## What's Working Now
 
-- [ ] Implement NextAuth.js authentication
-- [ ] Connect real database (PostgreSQL)
+- [x] NextAuth.js authentication (credentials provider)
+- [x] PostgreSQL database connected (Supabase)
+- [x] User registration and login
+- [x] Real transaction creation with API
+- [x] Transaction list with real-time data
+- [x] Transaction deletion
+- [x] User profile in sidebar
+- [x] Session management
+
+## Next Steps
+
+- [ ] Enable Row Level Security in Supabase (SQL provided in ENABLE_RLS.sql)
+- [ ] Implement budget CRUD operations
+- [ ] Implement goal CRUD operations
 - [ ] Set up Stripe products and test payments
-- [ ] Add transaction creation/editing forms
-- [ ] Add budget creation/editing forms
-- [ ] Add goal creation/editing forms
-- [ ] Implement real data fetching from database
-- [ ] Add data visualization charts (Recharts)
-- [ ] Implement PDF/Excel export functionality
-- [ ] Add email notifications
-- [ ] Add two-factor authentication
-- [ ] Add receipt upload functionality
+- [ ] Add PDF/Excel export functionality
+- [ ] Add data visualization charts
 - [ ] Add recurring transaction support
 - [ ] Implement search and filters
-- [ ] Add dark mode support
-- [ ] Write tests
 
 ## Contributing
 
