@@ -1,0 +1,107 @@
+"use client";
+
+import { useState } from "react";
+
+interface AddFundsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  goalId: string;
+  goalName: string;
+}
+
+export default function AddFundsModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  goalId,
+  goalName,
+}: AddFundsModalProps) {
+  const [loading, setLoading] = useState(false);
+  const [amount, setAmount] = useState("");
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/goals", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: goalId, amount: parseFloat(amount) }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add funds");
+      }
+
+      setAmount("");
+      onSuccess();
+      onClose();
+    } catch (error) {
+      console.error("Error adding funds:", error);
+      alert("Failed to add funds. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-neutral-dark">Add Funds</h2>
+          <button
+            onClick={onClose}
+            className="text-neutral hover:text-neutral-dark"
+          >
+            ✕
+          </button>
+        </div>
+
+        <p className="text-sm text-neutral-light mb-4">
+          Adding funds to: <span className="font-semibold text-neutral">{goalName}</span>
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-neutral-dark mb-1">
+              Amount (€)
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              required
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full px-4 py-2 border border-neutral-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="100.00"
+              autoFocus
+            />
+          </div>
+
+          <div className="flex gap-2 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-neutral-light text-neutral-dark rounded-lg hover:bg-neutral-light"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark disabled:opacity-50"
+            >
+              {loading ? "Adding..." : "Add Funds"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

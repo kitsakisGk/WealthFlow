@@ -1,0 +1,140 @@
+"use client";
+
+import { useState } from "react";
+
+interface AddGoalModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+export default function AddGoalModal({
+  isOpen,
+  onClose,
+  onSuccess,
+}: AddGoalModalProps) {
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    targetAmount: "",
+    deadline: "",
+  });
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/goals", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create goal");
+      }
+
+      // Reset form
+      setFormData({
+        name: "",
+        targetAmount: "",
+        deadline: "",
+      });
+
+      onSuccess();
+      onClose();
+    } catch (error) {
+      console.error("Error creating goal:", error);
+      alert("Failed to create goal. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-neutral-dark">New Goal</h2>
+          <button
+            onClick={onClose}
+            className="text-neutral hover:text-neutral-dark"
+          >
+            ✕
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-neutral-dark mb-1">
+              Goal Name
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              className="w-full px-4 py-2 border border-neutral-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="e.g., Emergency Fund, Vacation"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-neutral-dark mb-1">
+              Target Amount (€)
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              required
+              value={formData.targetAmount}
+              onChange={(e) =>
+                setFormData({ ...formData, targetAmount: e.target.value })
+              }
+              className="w-full px-4 py-2 border border-neutral-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="5000.00"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-neutral-dark mb-1">
+              Deadline (Optional)
+            </label>
+            <input
+              type="date"
+              value={formData.deadline}
+              onChange={(e) =>
+                setFormData({ ...formData, deadline: e.target.value })
+              }
+              className="w-full px-4 py-2 border border-neutral-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            />
+          </div>
+
+          <div className="flex gap-2 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-neutral-light text-neutral-dark rounded-lg hover:bg-neutral-light"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark disabled:opacity-50"
+            >
+              {loading ? "Creating..." : "Create Goal"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
