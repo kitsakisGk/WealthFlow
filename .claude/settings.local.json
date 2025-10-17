@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app:*)",
+      "Read(//d/Projects/**)",
+      "Bash(npx create-next-app@latest wealthflow-system --ts --tailwind --app --no-src-dir --import-alias \"@/*\" --use-npm --eslint)",
+      "Bash(npm install)",
+      "Bash(npx prisma generate:*)",
+      "Bash(npm run dev:*)",
+      "Read(//d/**)",
+      "Bash(npx prisma db push:*)",
+      "Bash(npm install:*)",
+      "Bash(node:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
