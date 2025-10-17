@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
         amount: parseFloat(amount),
         description,
         category: category || "Uncategorized",
-        type,
+        type: type.toUpperCase(), // Convert to uppercase for enum
         date: date ? new Date(date) : new Date(),
         userId: session.user.id,
       },
