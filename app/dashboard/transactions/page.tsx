@@ -115,14 +115,14 @@ export default function TransactionsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
         <div className="flex flex-wrap gap-4 items-center">
           <div>
-            <label className="text-sm font-medium text-neutral mr-2">Filter:</label>
+            <label className="text-sm font-medium text-neutral dark:text-gray-300 mr-2">Filter:</label>
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="border border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              className="border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 text-sm bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="all">All Transactions</option>
               <option value="income">Income Only</option>

@@ -58,12 +58,12 @@ export default function AddBudgetModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-neutral-dark">Create Budget</h2>
+          <h2 className="text-xl font-bold text-neutral dark:text-gray-200">Create Budget</h2>
           <button
             onClick={onClose}
-            className="text-neutral hover:text-neutral-dark"
+            className="text-neutral dark:text-gray-400 hover:text-neutral-dark dark:hover:text-gray-200"
           >
             ✕
           </button>
@@ -71,7 +71,7 @@ export default function AddBudgetModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-neutral-dark mb-1">
+            <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
               Category
             </label>
             <select
@@ -80,7 +80,7 @@ export default function AddBudgetModal({
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="w-full px-4 py-2 border border-neutral-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="">Select category</option>
               <option value="Food & Dining">Food & Dining</option>
@@ -94,7 +94,7 @@ export default function AddBudgetModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-dark mb-1">
+            <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
               Budget Amount (€)
             </label>
             <input
@@ -105,13 +105,13 @@ export default function AddBudgetModal({
               onChange={(e) =>
                 setFormData({ ...formData, amount: e.target.value })
               }
-              className="w-full px-4 py-2 border border-neutral-light rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="500.00"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-dark mb-1">
+            <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
               Period
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -121,7 +121,7 @@ export default function AddBudgetModal({
                 className={`py-2 px-4 rounded-lg ${
                   formData.period === "weekly"
                     ? "bg-primary text-white"
-                    : "bg-neutral-light text-neutral-dark"
+                    : "bg-gray-200 dark:bg-gray-700 text-neutral dark:text-gray-300"
                 }`}
               >
                 Weekly
@@ -132,7 +132,7 @@ export default function AddBudgetModal({
                 className={`py-2 px-4 rounded-lg ${
                   formData.period === "monthly"
                     ? "bg-primary text-white"
-                    : "bg-neutral-light text-neutral-dark"
+                    : "bg-gray-200 dark:bg-gray-700 text-neutral dark:text-gray-300"
                 }`}
               >
                 Monthly
@@ -143,7 +143,7 @@ export default function AddBudgetModal({
                 className={`py-2 px-4 rounded-lg ${
                   formData.period === "yearly"
                     ? "bg-primary text-white"
-                    : "bg-neutral-light text-neutral-dark"
+                    : "bg-gray-200 dark:bg-gray-700 text-neutral dark:text-gray-300"
                 }`}
               >
                 Yearly
@@ -155,7 +155,7 @@ export default function AddBudgetModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-neutral-light text-neutral-dark rounded-lg hover:bg-neutral-light"
+              className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-neutral dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               Cancel
             </button>

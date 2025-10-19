@@ -21,7 +21,9 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(taskkill:*)",
-      "Bash(timeout 5 bash -c \"while true; do sleep 1; done\")"
+      "Bash(timeout 5 bash -c \"while true; do sleep 1; done\")",
+      "Bash(start http://localhost:3000)",
+      "Bash(powershell -Command \"Start-Process ''http://localhost:3000''\")"
     ],
     "deny": [],
     "ask": []

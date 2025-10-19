@@ -71,11 +71,11 @@ export default function SettingsPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral mb-2">Account Type</label>
+            <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-2">Account Type</label>
             <select
               value={accountType}
               onChange={(e) => setAccountType(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="PERSONAL">Personal</option>
               <option value="BUSINESS">Small Business</option>
