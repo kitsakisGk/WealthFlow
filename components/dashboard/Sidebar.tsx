@@ -10,6 +10,7 @@ const navigationKeys = [
   { key: "transactions", href: "/dashboard/transactions", icon: "💰" },
   { key: "budgets", href: "/dashboard/budgets", icon: "📈" },
   { key: "goals", href: "/dashboard/goals", icon: "🎯" },
+  { key: "accounts", href: "/dashboard/accounts", icon: "🏦" },
   { key: "reports", href: "/dashboard/reports", icon: "📄" },
   { key: "settings", href: "/dashboard/settings", icon: "⚙️" },
 ];

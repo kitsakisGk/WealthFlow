@@ -17,6 +17,7 @@ const translations = {
     transactions: "Transactions",
     budgets: "Budgets",
     goals: "Goals",
+    accounts: "Accounts",
     reports: "Reports",
     settings: "Settings",
 
@@ -104,6 +105,7 @@ const translations = {
     transactions: "Συναλλαγές",
     budgets: "Προϋπολογισμοί",
     goals: "Στόχοι",
+    accounts: "Λογαριασμοί",
     reports: "Αναφορές",
     settings: "Ρυθμίσεις",
 

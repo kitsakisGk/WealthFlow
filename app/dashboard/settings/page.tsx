@@ -16,6 +16,7 @@ export default function SettingsPage() {
   const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
   const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showPreferencesSaved, setShowPreferencesSaved] = useState(false);
 
   const userName = session?.user?.name || "";
   const userEmail = session?.user?.email || "";
@@ -32,7 +33,8 @@ export default function SettingsPage() {
   };
 
   const handleSavePreferences = () => {
-    alert("Preferences saved successfully!");
+    setShowPreferencesSaved(true);
+    setTimeout(() => setShowPreferencesSaved(false), 3000);
   };
 
   return (
@@ -276,11 +278,18 @@ export default function SettingsPage() {
               <div className="absolute right-1 top-1 bg-white rounded-full w-4 h-4"></div>
             </button>
           </div>
-          <button
-            onClick={handleSavePreferences}
-            className="bg-positive hover:bg-positive/90 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-            Save Preferences
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleSavePreferences}
+              className="bg-positive hover:bg-positive/90 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+              Save Preferences
+            </button>
+            {showPreferencesSaved && (
+              <span className="text-positive dark:text-green-400 text-sm font-medium">
+                ✓ Preferences saved successfully!
+              </span>
+            )}
+          </div>
         </div>
       </div>
 

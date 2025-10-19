@@ -62,6 +62,40 @@ body {
   background-color: #475569 !important;
 }
 
+/* Better green colors for dark mode */
+.dark .text-positive {
+  color: #34d399 !important;
+}
+
+.dark .bg-positive {
+  background-color: #10b981 !important;
+}
+
+.dark .text-primary {
+  color: #34d399 !important;
+}
+
+.dark .bg-primary {
+  background-color: #059669 !important;
+}
+
+/* Better button visibility in dark mode */
+.dark button.bg-primary {
+  background-color: #059669 !important;
+}
+
+.dark button.bg-primary:hover {
+  background-color: #047857 !important;
+}
+
+.dark button.bg-positive {
+  background-color: #10b981 !important;
+}
+
+.dark button.bg-positive:hover {
+  background-color: #059669 !important;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
