@@ -100,50 +100,50 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-neutral-light">Balance</p>
+              <p className="text-sm font-medium text-neutral-light dark:text-gray-400">Balance</p>
               <p className={`text-3xl font-bold mt-2 ${balance >= 0 ? "text-positive" : "text-negative"}`}>
                 €{balance.toFixed(2)}
               </p>
             </div>
             <div className="text-4xl">💵</div>
           </div>
-          <p className="text-sm text-neutral-light mt-2">Income - Expenses</p>
+          <p className="text-sm text-neutral-light dark:text-gray-400 mt-2">Income - Expenses</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-neutral-light">Income</p>
+              <p className="text-sm font-medium text-neutral-light dark:text-gray-400">Income</p>
               <p className="text-3xl font-bold text-positive mt-2">€{totalIncome.toFixed(2)}</p>
             </div>
             <div className="text-4xl">📈</div>
           </div>
-          <p className="text-sm text-neutral-light mt-2">Total earned</p>
+          <p className="text-sm text-neutral-light dark:text-gray-400 mt-2">Total earned</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-neutral-light">Expenses</p>
+              <p className="text-sm font-medium text-neutral-light dark:text-gray-400">Expenses</p>
               <p className="text-3xl font-bold text-negative mt-2">€{totalExpenses.toFixed(2)}</p>
             </div>
             <div className="text-4xl">📉</div>
           </div>
-          <p className="text-sm text-neutral-light mt-2">Total spent</p>
+          <p className="text-sm text-neutral-light dark:text-gray-400 mt-2">Total spent</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-neutral-light">Goal Progress</p>
-              <p className="text-3xl font-bold text-primary mt-2">{goalProgress.toFixed(0)}%</p>
+              <p className="text-sm font-medium text-neutral-light dark:text-gray-400">Goal Progress</p>
+              <p className="text-3xl font-bold text-primary dark:text-green-400 mt-2">{goalProgress.toFixed(0)}%</p>
             </div>
             <div className="text-4xl">🎯</div>
           </div>
-          <p className="text-sm text-neutral-light mt-2">
+          <p className="text-sm text-neutral-light dark:text-gray-400 mt-2">
             €{totalGoalSaved.toFixed(2)} of €{totalGoalTarget.toFixed(2)}
           </p>
         </div>
@@ -152,15 +152,15 @@ export default function DashboardPage() {
       {/* Charts and Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Spending by Category */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-neutral">Spending by Category</h3>
-            <Link href="/dashboard/transactions" className="text-sm text-primary hover:underline">
+            <h3 className="text-lg font-semibold text-neutral dark:text-gray-200">Spending by Category</h3>
+            <Link href="/dashboard/transactions" className="text-sm text-primary dark:text-green-400 hover:underline">
               View All
             </Link>
           </div>
           {topCategories.length === 0 ? (
-            <p className="text-neutral-light text-center py-8">No expenses yet</p>
+            <p className="text-neutral-light dark:text-gray-400 text-center py-8">No expenses yet</p>
           ) : (
             <div className="space-y-4">
               {topCategories.map(([category, amount]) => {
@@ -168,12 +168,12 @@ export default function DashboardPage() {
                 return (
                   <div key={category}>
                     <div className="flex justify-between mb-1">
-                      <span className="text-sm font-medium text-neutral">{category}</span>
-                      <span className="text-sm font-semibold text-neutral">€{amount.toFixed(2)}</span>
+                      <span className="text-sm font-medium text-neutral dark:text-gray-300">{category}</span>
+                      <span className="text-sm font-semibold text-neutral dark:text-gray-200">€{amount.toFixed(2)}</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                       <div
-                        className="bg-primary h-2 rounded-full"
+                        className="bg-primary dark:bg-green-500 h-2 rounded-full"
                         style={{ width: `${percent}%` }}
                       ></div>
                     </div>
@@ -185,23 +185,23 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Transactions */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-neutral">Recent Transactions</h3>
-            <Link href="/dashboard/transactions" className="text-sm text-primary hover:underline">
+            <h3 className="text-lg font-semibold text-neutral dark:text-gray-200">Recent Transactions</h3>
+            <Link href="/dashboard/transactions" className="text-sm text-primary dark:text-green-400 hover:underline">
               View All
             </Link>
           </div>
           {recentTransactions.length === 0 ? (
-            <p className="text-neutral-light text-center py-8">No transactions yet</p>
+            <p className="text-neutral-light dark:text-gray-400 text-center py-8">No transactions yet</p>
           ) : (
             <div className="space-y-3">
               {recentTransactions.map((transaction) => (
-                <div key={transaction.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                <div key={transaction.id} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
                   <div className="flex items-center">
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        transaction.type.toLowerCase() === "income" ? "bg-positive/10" : "bg-neutral/10"
+                        transaction.type.toLowerCase() === "income" ? "bg-positive/10 dark:bg-positive/20" : "bg-neutral/10 dark:bg-gray-700"
                       }`}
                     >
                       <span className="text-lg">
@@ -209,8 +209,8 @@ export default function DashboardPage() {
                       </span>
                     </div>
                     <div className="ml-3">
-                      <p className="text-sm font-medium text-neutral">{transaction.description}</p>
-                      <p className="text-xs text-neutral-light">{transaction.category}</p>
+                      <p className="text-sm font-medium text-neutral dark:text-gray-200">{transaction.description}</p>
+                      <p className="text-xs text-neutral-light dark:text-gray-400">{transaction.category}</p>
                     </div>
                   </div>
                   <span

@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function SettingsPage() {
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
 
   const [accountType, setAccountType] = useState("PERSONAL");
   const [plan, setPlan] = useState("FREE");
@@ -37,7 +37,7 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6 max-w-4xl">
-      <h1 className="text-3xl font-bold text-neutral">Settings</h1>
+      <h1 className="text-3xl font-bold text-neutral dark:text-gray-200">{t("settings")}</h1>
 
       {/* Success Message */}
       {showUpgradeSuccess && (
@@ -47,11 +47,11 @@ export default function SettingsPage() {
       )}
 
       {/* Profile Settings */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold text-neutral mb-6">Profile Information</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold text-neutral dark:text-gray-200 mb-6">{t("profileInformation")}</h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-neutral mb-2">Full Name</label>
+            <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-2">{t("fullName")}</label>
             <input
               type="text"
               value={userName}

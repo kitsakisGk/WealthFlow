@@ -21,16 +21,27 @@ const translations = {
     settings: "Settings",
 
     // Dashboard
+    balance: "Balance",
     totalBalance: "Total Balance",
     income: "Income",
     expenses: "Expenses",
+    totalIncome: "Total Income",
+    totalExpenses: "Total Expenses",
+    netIncome: "Net Income",
+    goalProgress: "Goal Progress",
+    spendingByCategory: "Spending by Category",
     recentTransactions: "Recent Transactions",
     viewAll: "View All",
-    budgetOverview: "Budget Overview",
-    goalsProgress: "Goals Progress",
+    totalEarned: "Total earned",
+    totalSpent: "Total spent",
+    incomeMinusExpenses: "Income - Expenses",
+    noExpensesYet: "No expenses yet",
+    noTransactionsYet: "No transactions yet",
 
     // Transactions
     addTransaction: "Add Transaction",
+    allTransactions: "All Transactions",
+    filter: "Filter",
     description: "Description",
     amount: "Amount",
     category: "Category",
@@ -44,6 +55,8 @@ const translations = {
     limit: "limit",
     remaining: "remaining",
     over: "over",
+    totalAllocated: "Total Allocated",
+    totalSpent: "Total Spent",
 
     // Goals
     createGoal: "Create Goal",
@@ -52,8 +65,15 @@ const translations = {
     current: "Current",
     complete: "Complete",
 
+    // Reports
+    financialReports: "Financial Reports",
+    exportToExcel: "Export to Excel",
+    savingsRate: "Savings Rate",
+    ofTotalIncome: "Of total income",
+
     // Settings
     profile: "Profile Information",
+    profileInformation: "Profile Information",
     fullName: "Full Name",
     email: "Email",
     accountType: "Account Type",
@@ -65,6 +85,9 @@ const translations = {
     currency: "Currency",
     dateFormat: "Date Format",
     savePreferences: "Save Preferences",
+    saveProfileChanges: "Save Profile Changes",
+    emailNotifications: "Email Notifications",
+    receiveAlerts: "Receive budget alerts and updates",
 
     // Common
     save: "Save",
@@ -85,16 +108,27 @@ const translations = {
     settings: "Ρυθμίσεις",
 
     // Dashboard
+    balance: "Υπόλοιπο",
     totalBalance: "Συνολικό Υπόλοιπο",
     income: "Έσοδα",
     expenses: "Έξοδα",
+    totalIncome: "Συνολικά Έσοδα",
+    totalExpenses: "Συνολικά Έξοδα",
+    netIncome: "Καθαρά Έσοδα",
+    goalProgress: "Πρόοδος Στόχου",
+    spendingByCategory: "Δαπάνες ανά Κατηγορία",
     recentTransactions: "Πρόσφατες Συναλλαγές",
     viewAll: "Προβολή Όλων",
-    budgetOverview: "Επισκόπηση Προϋπολογισμού",
-    goalsProgress: "Πρόοδος Στόχων",
+    totalEarned: "Συνολικά κερδισμένα",
+    totalSpent: "Συνολικά ξοδεμένα",
+    incomeMinusExpenses: "Έσοδα - Έξοδα",
+    noExpensesYet: "Δεν υπάρχουν έξοδα ακόμα",
+    noTransactionsYet: "Δεν υπάρχουν συναλλαγές ακόμα",
 
     // Transactions
     addTransaction: "Προσθήκη Συναλλαγής",
+    allTransactions: "Όλες οι Συναλλαγές",
+    filter: "Φίλτρο",
     description: "Περιγραφή",
     amount: "Ποσό",
     category: "Κατηγορία",
@@ -104,20 +138,29 @@ const translations = {
 
     // Budgets
     createBudget: "Δημιουργία Προϋπολογισμού",
-    spent: "ξοδεύτηκε",
+    spent: "ξοδεύτηκαν",
     limit: "όριο",
     remaining: "απομένουν",
     over: "υπέρβαση",
+    totalAllocated: "Συνολικά Διατεθέντα",
+    totalSpent: "Συνολικά Ξοδεμένα",
 
     // Goals
     createGoal: "Δημιουργία Στόχου",
-    addFunds: "Προσθήκη Χρημάτων",
+    addFunds: "Προσθήκη Κεφαλαίων",
     target: "Στόχος",
     current: "Τρέχον",
     complete: "Ολοκληρώθηκε",
 
+    // Reports
+    financialReports: "Οικονομικές Αναφορές",
+    exportToExcel: "Εξαγωγή σε Excel",
+    savingsRate: "Ποσοστό Αποταμίευσης",
+    ofTotalIncome: "Του συνολικού εισοδήματος",
+
     // Settings
     profile: "Πληροφορίες Προφίλ",
+    profileInformation: "Πληροφορίες Προφίλ",
     fullName: "Πλήρες Όνομα",
     email: "Email",
     accountType: "Τύπος Λογαριασμού",
@@ -129,6 +172,9 @@ const translations = {
     currency: "Νόμισμα",
     dateFormat: "Μορφή Ημερομηνίας",
     savePreferences: "Αποθήκευση Προτιμήσεων",
+    saveProfileChanges: "Αποθήκευση Αλλαγών Προφίλ",
+    emailNotifications: "Ειδοποιήσεις Email",
+    receiveAlerts: "Λάβετε ειδοποιήσεις προϋπολογισμού και ενημερώσεις",
 
     // Common
     save: "Αποθήκευση",

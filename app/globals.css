@@ -18,8 +18,8 @@
   --negative: #c03333;
   --neutral-light: #9ca3af;
   --neutral: #d1d5db;
-  --background: #111827;
-  --foreground: #f3f4f6;
+  --background: #0f172a;
+  --foreground: #f1f5f9;
 }
 
 body {
@@ -27,6 +27,39 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode improvements for all white cards */
+.dark .bg-white {
+  background-color: #1e293b !important;
+}
+
+.dark .text-neutral {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-neutral-light {
+  color: #94a3b8 !important;
+}
+
+.dark .border-gray-300 {
+  border-color: #475569 !important;
+}
+
+.dark .border-gray-100 {
+  border-color: #334155 !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #1e293b !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #334155 !important;
+}
+
+.dark .bg-gray-200 {
+  background-color: #475569 !important;
 }
 
 @layer utilities {
