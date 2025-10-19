@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface BankAccount {
@@ -8,22 +8,14 @@ interface BankAccount {
   bankName: string;
   accountType: string;
   balance: number;
-  accountNumber: string;
+  accountNumber: string | null;
   color: string;
 }
 
 export default function AccountsPage() {
   const { t } = useLanguage();
-  const [accounts, setAccounts] = useState<BankAccount[]>([
-    {
-      id: "1",
-      bankName: "National Bank",
-      accountType: "Checking",
-      balance: 5420.50,
-      accountNumber: "****1234",
-      color: "bg-blue-500",
-    },
-  ]);
+  const [accounts, setAccounts] = useState<BankAccount[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newAccount, setNewAccount] = useState({
@@ -34,25 +26,70 @@ export default function AccountsPage() {
     color: "bg-blue-500",
   });
 
-  const handleAddAccount = () => {
-    const account: BankAccount = {
-      id: Date.now().toString(),
-      ...newAccount,
-    };
-    setAccounts([...accounts, account]);
-    setIsModalOpen(false);
-    setNewAccount({
-      bankName: "",
-      accountType: "Checking",
-      balance: 0,
-      accountNumber: "",
-      color: "bg-blue-500",
-    });
+  // Fetch accounts from API
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
+
+  const fetchAccounts = async () => {
+    try {
+      const response = await fetch("/api/accounts");
+      if (response.ok) {
+        const data = await response.json();
+        setAccounts(data);
+      }
+    } catch (error) {
+      console.error("Error fetching accounts:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDeleteAccount = (id: string) => {
+  const handleAddAccount = async () => {
+    try {
+      const response = await fetch("/api/accounts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newAccount),
+      });
+
+      if (response.ok) {
+        await fetchAccounts();
+        setIsModalOpen(false);
+        setNewAccount({
+          bankName: "",
+          accountType: "Checking",
+          balance: 0,
+          accountNumber: "",
+          color: "bg-blue-500",
+        });
+      } else {
+        alert("Failed to add account");
+      }
+    } catch (error) {
+      console.error("Error adding account:", error);
+      alert("Failed to add account");
+    }
+  };
+
+  const handleDeleteAccount = async (id: string) => {
     if (confirm(t("removeAccountConfirm"))) {
-      setAccounts(accounts.filter((acc) => acc.id !== id));
+      try {
+        const response = await fetch(`/api/accounts?id=${id}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          await fetchAccounts();
+        } else {
+          alert("Failed to delete account");
+        }
+      } catch (error) {
+        console.error("Error deleting account:", error);
+        alert("Failed to delete account");
+      }
     }
   };
 
@@ -66,6 +103,14 @@ export default function AccountsPage() {
     { value: "bg-yellow-500", label: t("yellow") },
     { value: "bg-pink-500", label: t("pink") },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-neutral dark:text-gray-300">{t("loading")}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -112,7 +157,7 @@ export default function AccountsPage() {
               {account.bankName}
             </h3>
             <p className="text-sm text-neutral-light dark:text-gray-400 mb-4">
-              {account.accountType} • {account.accountNumber}
+              {account.accountType}{account.accountNumber ? ` • ${account.accountNumber}` : ""}
             </p>
 
             <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
