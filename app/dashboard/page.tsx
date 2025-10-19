@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Transaction {
   id: string;
@@ -27,6 +28,7 @@ interface Goal {
 }
 
 export default function DashboardPage() {
+  const { t } = useLanguage();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
@@ -91,7 +93,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-neutral">Loading dashboard...</p>
+        <p className="text-neutral">{t("loading")}</p>
       </div>
     );
   }
@@ -103,42 +105,42 @@ export default function DashboardPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-neutral-light dark:text-gray-400">Balance</p>
+              <p className="text-sm font-medium text-neutral-light dark:text-gray-400">{t("balance")}</p>
               <p className={`text-3xl font-bold mt-2 ${balance >= 0 ? "text-positive" : "text-negative"}`}>
                 €{balance.toFixed(2)}
               </p>
             </div>
             <div className="text-4xl">💵</div>
           </div>
-          <p className="text-sm text-neutral-light dark:text-gray-400 mt-2">Income - Expenses</p>
+          <p className="text-sm text-neutral-light dark:text-gray-400 mt-2">{t("incomeMinusExpenses")}</p>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-neutral-light dark:text-gray-400">Income</p>
+              <p className="text-sm font-medium text-neutral-light dark:text-gray-400">{t("income")}</p>
               <p className="text-3xl font-bold text-positive mt-2">€{totalIncome.toFixed(2)}</p>
             </div>
             <div className="text-4xl">📈</div>
           </div>
-          <p className="text-sm text-neutral-light dark:text-gray-400 mt-2">Total earned</p>
+          <p className="text-sm text-neutral-light dark:text-gray-400 mt-2">{t("totalEarned")}</p>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-neutral-light dark:text-gray-400">Expenses</p>
+              <p className="text-sm font-medium text-neutral-light dark:text-gray-400">{t("expenses")}</p>
               <p className="text-3xl font-bold text-negative mt-2">€{totalExpenses.toFixed(2)}</p>
             </div>
             <div className="text-4xl">📉</div>
           </div>
-          <p className="text-sm text-neutral-light dark:text-gray-400 mt-2">Total spent</p>
+          <p className="text-sm text-neutral-light dark:text-gray-400 mt-2">{t("totalSpent")}</p>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-neutral-light dark:text-gray-400">Goal Progress</p>
+              <p className="text-sm font-medium text-neutral-light dark:text-gray-400">{t("goalProgress")}</p>
               <p className="text-3xl font-bold text-primary dark:text-green-400 mt-2">{goalProgress.toFixed(0)}%</p>
             </div>
             <div className="text-4xl">🎯</div>
@@ -154,13 +156,13 @@ export default function DashboardPage() {
         {/* Spending by Category */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-neutral dark:text-gray-200">Spending by Category</h3>
+            <h3 className="text-lg font-semibold text-neutral dark:text-gray-200">{t("spendingByCategory")}</h3>
             <Link href="/dashboard/transactions" className="text-sm text-primary dark:text-green-400 hover:underline">
-              View All
+              {t("viewAll")}
             </Link>
           </div>
           {topCategories.length === 0 ? (
-            <p className="text-neutral-light dark:text-gray-400 text-center py-8">No expenses yet</p>
+            <p className="text-neutral-light dark:text-gray-400 text-center py-8">{t("noExpensesYet")}</p>
           ) : (
             <div className="space-y-4">
               {topCategories.map(([category, amount]) => {
@@ -187,13 +189,13 @@ export default function DashboardPage() {
         {/* Recent Transactions */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-neutral dark:text-gray-200">Recent Transactions</h3>
+            <h3 className="text-lg font-semibold text-neutral dark:text-gray-200">{t("recentTransactions")}</h3>
             <Link href="/dashboard/transactions" className="text-sm text-primary dark:text-green-400 hover:underline">
-              View All
+              {t("viewAll")}
             </Link>
           </div>
           {recentTransactions.length === 0 ? (
-            <p className="text-neutral-light dark:text-gray-400 text-center py-8">No transactions yet</p>
+            <p className="text-neutral-light dark:text-gray-400 text-center py-8">{t("noTransactionsYet")}</p>
           ) : (
             <div className="space-y-3">
               {recentTransactions.map((transaction) => (
@@ -232,13 +234,13 @@ export default function DashboardPage() {
         {/* Active Budgets */}
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-neutral">Active Budgets</h3>
+            <h3 className="text-lg font-semibold text-neutral">{t("activeBudgets")}</h3>
             <Link href="/dashboard/budgets" className="text-sm text-primary hover:underline">
-              View All
+              {t("viewAll")}
             </Link>
           </div>
           {budgets.length === 0 ? (
-            <p className="text-neutral-light text-center py-8">No budgets yet</p>
+            <p className="text-neutral-light text-center py-8">{t("noBudgetsYet")}</p>
           ) : (
             <div className="space-y-3">
               {budgets.slice(0, 3).map((budget) => (
@@ -257,13 +259,13 @@ export default function DashboardPage() {
         {/* Active Goals */}
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-neutral">Active Goals</h3>
+            <h3 className="text-lg font-semibold text-neutral">{t("activeGoals")}</h3>
             <Link href="/dashboard/goals" className="text-sm text-primary hover:underline">
-              View All
+              {t("viewAll")}
             </Link>
           </div>
           {goals.length === 0 ? (
-            <p className="text-neutral-light text-center py-8">No goals yet</p>
+            <p className="text-neutral-light text-center py-8">{t("noGoalsYet")}</p>
           ) : (
             <div className="space-y-3">
               {goals.slice(0, 3).map((goal) => {
@@ -293,35 +295,35 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-primary mb-4">Quick Actions</h3>
+        <h3 className="text-lg font-semibold text-primary mb-4">{t("quickActions")}</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Link
             href="/dashboard/transactions"
             className="flex flex-col items-center justify-center p-4 bg-white rounded-lg hover:shadow-md transition-shadow cursor-pointer"
           >
             <span className="text-3xl mb-2">💰</span>
-            <span className="text-sm font-medium text-neutral">Add Transaction</span>
+            <span className="text-sm font-medium text-neutral">{t("addTransaction")}</span>
           </Link>
           <Link
             href="/dashboard/budgets"
             className="flex flex-col items-center justify-center p-4 bg-white rounded-lg hover:shadow-md transition-shadow cursor-pointer"
           >
             <span className="text-3xl mb-2">📈</span>
-            <span className="text-sm font-medium text-neutral">Create Budget</span>
+            <span className="text-sm font-medium text-neutral">{t("createBudget")}</span>
           </Link>
           <Link
             href="/dashboard/goals"
             className="flex flex-col items-center justify-center p-4 bg-white rounded-lg hover:shadow-md transition-shadow cursor-pointer"
           >
             <span className="text-3xl mb-2">🎯</span>
-            <span className="text-sm font-medium text-neutral">New Goal</span>
+            <span className="text-sm font-medium text-neutral">{t("newGoal")}</span>
           </Link>
           <Link
             href="/dashboard/reports"
             className="flex flex-col items-center justify-center p-4 bg-white rounded-lg hover:shadow-md transition-shadow cursor-pointer"
           >
             <span className="text-3xl mb-2">📄</span>
-            <span className="text-sm font-medium text-neutral">View Reports</span>
+            <span className="text-sm font-medium text-neutral">{t("viewReports")}</span>
           </Link>
         </div>
       </div>

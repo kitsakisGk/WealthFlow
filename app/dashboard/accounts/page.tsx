@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface BankAccount {
   id: string;
@@ -12,6 +13,7 @@ interface BankAccount {
 }
 
 export default function AccountsPage() {
+  const { t } = useLanguage();
   const [accounts, setAccounts] = useState<BankAccount[]>([
     {
       id: "1",
@@ -49,7 +51,7 @@ export default function AccountsPage() {
   };
 
   const handleDeleteAccount = (id: string) => {
-    if (confirm("Are you sure you want to remove this account?")) {
+    if (confirm(t("removeAccountConfirm"))) {
       setAccounts(accounts.filter((acc) => acc.id !== id));
     }
   };
@@ -57,12 +59,12 @@ export default function AccountsPage() {
   const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
 
   const colorOptions = [
-    { value: "bg-blue-500", label: "Blue" },
-    { value: "bg-green-500", label: "Green" },
-    { value: "bg-purple-500", label: "Purple" },
-    { value: "bg-red-500", label: "Red" },
-    { value: "bg-yellow-500", label: "Yellow" },
-    { value: "bg-pink-500", label: "Pink" },
+    { value: "bg-blue-500", label: t("blue") },
+    { value: "bg-green-500", label: t("green") },
+    { value: "bg-purple-500", label: t("purple") },
+    { value: "bg-red-500", label: t("red") },
+    { value: "bg-yellow-500", label: t("yellow") },
+    { value: "bg-pink-500", label: t("pink") },
   ];
 
   return (
@@ -70,24 +72,24 @@ export default function AccountsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-neutral dark:text-gray-200">Bank Accounts</h1>
+          <h1 className="text-3xl font-bold text-neutral dark:text-gray-200">{t("bankAccounts")}</h1>
           <p className="text-sm text-neutral-light dark:text-gray-400 mt-1">
-            Track all your bank accounts in one place
+            {t("trackAllAccounts")}
           </p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
           className="mt-4 md:mt-0 bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-medium transition-colors"
         >
-          + Add Account
+          + {t("addAccount")}
         </button>
       </div>
 
       {/* Total Balance Card */}
       <div className="bg-gradient-to-r from-primary to-positive dark:from-green-700 dark:to-green-500 rounded-lg shadow-lg p-8 text-white">
-        <p className="text-sm opacity-90">Total Balance Across All Accounts</p>
+        <p className="text-sm opacity-90">{t("totalBalanceAcrossAll")}</p>
         <p className="text-5xl font-bold mt-2">€{totalBalance.toFixed(2)}</p>
-        <p className="text-sm opacity-90 mt-2">{accounts.length} {accounts.length === 1 ? 'Account' : 'Accounts'}</p>
+        <p className="text-sm opacity-90 mt-2">{accounts.length} {accounts.length === 1 ? t("account") : t("accountsPlural")}</p>
       </div>
 
       {/* Accounts Grid */}
@@ -102,7 +104,7 @@ export default function AccountsPage() {
                 onClick={() => handleDeleteAccount(account.id)}
                 className="text-negative hover:text-negative/80 text-sm"
               >
-                Remove
+                {t("remove")}
               </button>
             </div>
 
@@ -114,7 +116,7 @@ export default function AccountsPage() {
             </p>
 
             <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
-              <p className="text-sm text-neutral-light dark:text-gray-400">Current Balance</p>
+              <p className="text-sm text-neutral-light dark:text-gray-400">{t("currentBalance")}</p>
               <p className="text-2xl font-bold text-neutral dark:text-gray-200 mt-1">
                 €{account.balance.toFixed(2)}
               </p>
@@ -128,8 +130,8 @@ export default function AccountsPage() {
           className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-primary dark:hover:border-green-500 transition-colors flex flex-col items-center justify-center min-h-[200px] group"
         >
           <div className="text-6xl mb-3 opacity-50 group-hover:opacity-100 transition-opacity">+</div>
-          <p className="text-neutral dark:text-gray-300 font-medium">Add New Account</p>
-          <p className="text-sm text-neutral-light dark:text-gray-400 mt-1">Click to add</p>
+          <p className="text-neutral dark:text-gray-300 font-medium">{t("addNewAccount")}</p>
+          <p className="text-sm text-neutral-light dark:text-gray-400 mt-1">{t("clickToAdd")}</p>
         </button>
       </div>
 
@@ -138,7 +140,7 @@ export default function AccountsPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-neutral dark:text-gray-200">Add Bank Account</h2>
+              <h2 className="text-2xl font-bold text-neutral dark:text-gray-200">{t("addBankAccount")}</h2>
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="text-neutral-light dark:text-gray-400 hover:text-neutral dark:hover:text-gray-200"
@@ -150,7 +152,7 @@ export default function AccountsPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-2">
-                  Bank Name
+                  {t("bankName")}
                 </label>
                 <input
                   type="text"
@@ -163,23 +165,23 @@ export default function AccountsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-2">
-                  Account Type
+                  {t("accountType")}
                 </label>
                 <select
                   value={newAccount.accountType}
                   onChange={(e) => setNewAccount({ ...newAccount, accountType: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary"
                 >
-                  <option value="Checking">Checking</option>
-                  <option value="Savings">Savings</option>
-                  <option value="Credit Card">Credit Card</option>
-                  <option value="Investment">Investment</option>
+                  <option value="Checking">{t("checking")}</option>
+                  <option value="Savings">{t("savings")}</option>
+                  <option value="Credit Card">{t("creditCard")}</option>
+                  <option value="Investment">{t("investment")}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-2">
-                  Current Balance
+                  {t("currentBalance")}
                 </label>
                 <input
                   type="number"
@@ -193,7 +195,7 @@ export default function AccountsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-2">
-                  Last 4 Digits (Optional)
+                  {t("last4Digits")}
                 </label>
                 <input
                   type="text"
@@ -207,7 +209,7 @@ export default function AccountsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-2">
-                  Card Color
+                  {t("cardColor")}
                 </label>
                 <div className="grid grid-cols-3 gap-3">
                   {colorOptions.map((color) => (
@@ -230,14 +232,14 @@ export default function AccountsPage() {
                 onClick={() => setIsModalOpen(false)}
                 className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-neutral dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
-                Cancel
+                {t("cancel")}
               </button>
               <button
                 onClick={handleAddAccount}
                 disabled={!newAccount.bankName}
                 className="flex-1 px-4 py-2 bg-positive hover:bg-positive/90 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Add Account
+                {t("addAccount")}
               </button>
             </div>
           </div>
@@ -246,10 +248,9 @@ export default function AccountsPage() {
 
       {/* Info Box */}
       <div className="bg-primary/5 dark:bg-green-900/20 border border-primary/20 dark:border-green-700 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-primary dark:text-green-400 mb-2">💡 Privacy & Security</h3>
+        <h3 className="text-lg font-semibold text-primary dark:text-green-400 mb-2">💡 {t("privacySecurity")}</h3>
         <p className="text-sm text-neutral dark:text-gray-300">
-          This information is stored locally on your device only. We never ask for full account numbers or sensitive banking credentials.
-          This feature is designed to help you track your accounts visually in one place.
+          {t("privacyNote")}
         </p>
       </div>
     </div>

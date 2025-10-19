@@ -24,6 +24,7 @@ model User {
   budgets       Budget[]
   goals         Goal[]
   categories    Category[]
+  bankAccounts  BankAccount[]
 
   @@map("users")
 }
@@ -121,4 +122,22 @@ model Category {
   @@unique([userId, name])
   @@index([userId])
   @@map("categories")
+}
+
+model BankAccount {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  bankName      String
+  accountType   String
+  balance       Float
+  accountNumber String?
+  color         String   @default("bg-blue-500")
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@map("bank_accounts")
 }
