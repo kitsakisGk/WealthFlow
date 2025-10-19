@@ -11,8 +11,17 @@ interface Budget {
   startDate: string;
 }
 
+interface Transaction {
+  id: string;
+  amount: number;
+  category: string;
+  type: string;
+  date: string;
+}
+
 export default function BudgetsPage() {
   const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -30,8 +39,21 @@ export default function BudgetsPage() {
     }
   };
 
+  const fetchTransactions = async () => {
+    try {
+      const response = await fetch("/api/transactions");
+      if (response.ok) {
+        const data = await response.json();
+        setTransactions(data);
+      }
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    }
+  };
+
   useEffect(() => {
     fetchBudgets();
+    fetchTransactions();
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -53,9 +75,55 @@ export default function BudgetsPage() {
     }
   };
 
+  // Helper function to calculate spent amount for a budget
+  const calculateSpent = (budget: Budget) => {
+    const startDate = new Date(budget.startDate);
+    const now = new Date();
+    let periodStart = new Date(startDate);
+
+    // Calculate the current period start based on budget period
+    if (budget.period === "MONTHLY") {
+      // Find the most recent period start
+      while (periodStart < now) {
+        const nextPeriod = new Date(periodStart);
+        nextPeriod.setMonth(nextPeriod.getMonth() + 1);
+        if (nextPeriod > now) break;
+        periodStart = nextPeriod;
+      }
+    } else if (budget.period === "WEEKLY") {
+      while (periodStart < now) {
+        const nextPeriod = new Date(periodStart);
+        nextPeriod.setDate(nextPeriod.getDate() + 7);
+        if (nextPeriod > now) break;
+        periodStart = nextPeriod;
+      }
+    } else if (budget.period === "YEARLY") {
+      while (periodStart < now) {
+        const nextPeriod = new Date(periodStart);
+        nextPeriod.setFullYear(nextPeriod.getFullYear() + 1);
+        if (nextPeriod > now) break;
+        periodStart = nextPeriod;
+      }
+    }
+
+    // Calculate spent in current period for this category
+    const spent = transactions
+      .filter((t) => {
+        const transactionDate = new Date(t.date);
+        return (
+          t.type.toLowerCase() === "expense" &&
+          t.category === budget.category &&
+          transactionDate >= periodStart &&
+          transactionDate <= now
+        );
+      })
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    return spent;
+  };
+
   const totalAllocated = budgets.reduce((sum, b) => sum + b.amount, 0);
-  // TODO: Calculate actual spent from transactions
-  const totalSpent = 0;
+  const totalSpent = budgets.reduce((sum, b) => sum + calculateSpent(b), 0);
   const totalRemaining = totalAllocated - totalSpent;
 
   if (loading) {
@@ -138,6 +206,12 @@ export default function BudgetsPage() {
           {/* Budget Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {budgets.map((budget) => {
+              const spent = calculateSpent(budget);
+              const remaining = budget.amount - spent;
+              const percentage = (spent / budget.amount) * 100;
+              const isOverBudget = spent > budget.amount;
+              const isNearLimit = percentage >= 80 && !isOverBudget;
+
               return (
                 <div key={budget.id} className="bg-white rounded-lg shadow p-6">
                   <div className="flex items-start justify-between mb-4">
@@ -153,26 +227,70 @@ export default function BudgetsPage() {
                     </button>
                   </div>
 
-                  <div className="space-y-3">
-                    <div>
-                      <div className="flex justify-between text-sm mb-2">
-                        <span className="text-neutral-light">Budget Amount</span>
-                        <span className="font-semibold text-neutral">
-                          €{budget.amount.toFixed(2)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-xs text-neutral-light">
-                        <span>Started: {new Date(budget.startDate).toLocaleDateString()}</span>
-                        <span>Period: {budget.period.toLowerCase()}</span>
-                      </div>
+                  {/* Progress Bar */}
+                  <div className="mb-4">
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="font-semibold text-negative">
+                        €{spent.toFixed(2)} spent
+                      </span>
+                      <span className="font-semibold text-neutral">
+                        €{budget.amount.toFixed(2)} limit
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-4">
+                      <div
+                        className={`h-4 rounded-full transition-all ${
+                          isOverBudget
+                            ? "bg-negative"
+                            : isNearLimit
+                            ? "bg-warning"
+                            : "bg-positive"
+                        }`}
+                        style={{ width: `${Math.min(percentage, 100)}%` }}
+                      ></div>
+                    </div>
+                    <div className="flex justify-between items-center mt-2">
+                      <span className={`text-sm font-semibold ${
+                        isOverBudget ? "text-negative" : "text-primary"
+                      }`}>
+                        {percentage.toFixed(1)}% Used
+                      </span>
+                      <span className={`text-sm font-semibold ${
+                        remaining >= 0 ? "text-positive" : "text-negative"
+                      }`}>
+                        €{Math.abs(remaining).toFixed(2)} {remaining >= 0 ? "remaining" : "over"}
+                      </span>
                     </div>
                   </div>
 
-                  <div className="mt-4 bg-primary/5 border border-primary/20 rounded-lg p-3">
-                    <p className="text-sm text-primary">
-                      💡 Track your spending in this category to see progress
-                    </p>
+                  {/* Period Info */}
+                  <div className="flex justify-between text-xs text-neutral-light pt-3 border-t border-gray-100">
+                    <span>Started: {new Date(budget.startDate).toLocaleDateString()}</span>
+                    <span>Resets: {budget.period.toLowerCase()}</span>
                   </div>
+
+                  {/* Warning Messages */}
+                  {isOverBudget && (
+                    <div className="mt-4 bg-negative/10 border border-negative/20 rounded-lg p-3">
+                      <p className="text-sm text-negative font-semibold">
+                        ⚠️ You've exceeded this budget by €{Math.abs(remaining).toFixed(2)}
+                      </p>
+                    </div>
+                  )}
+                  {isNearLimit && (
+                    <div className="mt-4 bg-warning/10 border border-warning/20 rounded-lg p-3">
+                      <p className="text-sm text-warning font-semibold">
+                        ⚠️ You're approaching your budget limit!
+                      </p>
+                    </div>
+                  )}
+                  {!isOverBudget && !isNearLimit && spent > 0 && (
+                    <div className="mt-4 bg-positive/10 border border-positive/20 rounded-lg p-3">
+                      <p className="text-sm text-positive font-semibold">
+                        ✓ You're on track with this budget!
+                      </p>
+                    </div>
+                  )}
                 </div>
               );
             })}

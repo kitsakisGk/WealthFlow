@@ -20,6 +20,24 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Password strength validation
+  const validatePasswordStrength = (password: string) => {
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const isLongEnough = password.length >= 8;
+
+    return {
+      hasLetter,
+      hasNumber,
+      hasSymbol,
+      isLongEnough,
+      isValid: hasLetter && hasNumber && hasSymbol && isLongEnough,
+    };
+  };
+
+  const passwordStrength = validatePasswordStrength(formData.password);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -29,8 +47,8 @@ export default function SignupPage() {
       return;
     }
 
-    if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters");
+    if (!passwordStrength.isValid) {
+      setError("Password must contain at least 8 characters, including letters, numbers, and symbols");
       return;
     }
 
@@ -162,8 +180,32 @@ export default function SignupPage() {
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-neutral rounded-md focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-                placeholder="Minimum 8 characters"
+                placeholder="Enter strong password"
               />
+              {formData.password && (
+                <div className="mt-2 space-y-1">
+                  <div className="flex items-center text-xs">
+                    <span className={passwordStrength.isLongEnough ? "text-positive" : "text-neutral-light"}>
+                      {passwordStrength.isLongEnough ? "✓" : "○"} At least 8 characters
+                    </span>
+                  </div>
+                  <div className="flex items-center text-xs">
+                    <span className={passwordStrength.hasLetter ? "text-positive" : "text-neutral-light"}>
+                      {passwordStrength.hasLetter ? "✓" : "○"} Contains letters
+                    </span>
+                  </div>
+                  <div className="flex items-center text-xs">
+                    <span className={passwordStrength.hasNumber ? "text-positive" : "text-neutral-light"}>
+                      {passwordStrength.hasNumber ? "✓" : "○"} Contains numbers
+                    </span>
+                  </div>
+                  <div className="flex items-center text-xs">
+                    <span className={passwordStrength.hasSymbol ? "text-positive" : "text-neutral-light"}>
+                      {passwordStrength.hasSymbol ? "✓" : "○"} Contains symbols (!@#$%^&*)
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>

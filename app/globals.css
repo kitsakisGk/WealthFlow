@@ -12,17 +12,21 @@
   --foreground: #0a0a0a;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --primary: #1a4d35;
+  --positive: #0a9b86;
+  --negative: #c03333;
+  --neutral-light: #9ca3af;
+  --neutral: #d1d5db;
+  --background: #111827;
+  --foreground: #f3f4f6;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 @layer utilities {

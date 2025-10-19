@@ -3,19 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: "📊" },
-  { name: "Transactions", href: "/dashboard/transactions", icon: "💰" },
-  { name: "Budgets", href: "/dashboard/budgets", icon: "📈" },
-  { name: "Goals", href: "/dashboard/goals", icon: "🎯" },
-  { name: "Reports", href: "/dashboard/reports", icon: "📄" },
-  { name: "Settings", href: "/dashboard/settings", icon: "⚙️" },
+const navigationKeys = [
+  { key: "dashboard", href: "/dashboard", icon: "📊" },
+  { key: "transactions", href: "/dashboard/transactions", icon: "💰" },
+  { key: "budgets", href: "/dashboard/budgets", icon: "📈" },
+  { key: "goals", href: "/dashboard/goals", icon: "🎯" },
+  { key: "reports", href: "/dashboard/reports", icon: "📄" },
+  { key: "settings", href: "/dashboard/settings", icon: "⚙️" },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { t } = useLanguage();
 
   const userName = session?.user?.name || "User";
   const userEmail = session?.user?.email || "";
@@ -36,11 +38,11 @@ export default function Sidebar() {
             </Link>
           </div>
           <nav className="mt-8 flex-1 px-2 space-y-1">
-            {navigation.map((item) => {
+            {navigationKeys.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
-                  key={item.name}
+                  key={item.key}
                   href={item.href}
                   className={`group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-colors ${
                     isActive
@@ -49,7 +51,7 @@ export default function Sidebar() {
                   }`}
                 >
                   <span className="mr-3 text-xl">{item.icon}</span>
-                  {item.name}
+                  {t(item.key)}
                 </Link>
               );
             })}

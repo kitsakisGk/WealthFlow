@@ -1,14 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function SettingsPage() {
+  const { data: session } = useSession();
+  const { theme, setTheme } = useTheme();
+  const { language, setLanguage } = useLanguage();
+
   const [accountType, setAccountType] = useState("PERSONAL");
   const [plan, setPlan] = useState("FREE");
   const [currency, setCurrency] = useState("EUR");
   const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
   const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+
+  const userName = session?.user?.name || "";
+  const userEmail = session?.user?.email || "";
 
   const handleUpgrade = (selectedPlan: string) => {
     setPlan(selectedPlan);
@@ -44,16 +54,18 @@ export default function SettingsPage() {
             <label className="block text-sm font-medium text-neutral mb-2">Full Name</label>
             <input
               type="text"
-              defaultValue="John Doe"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              value={userName}
+              readOnly
+              className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-neutral mb-2">Email</label>
             <input
               type="email"
-              defaultValue="john@example.com"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              value={userEmail}
+              readOnly
+              className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
@@ -206,15 +218,38 @@ export default function SettingsPage() {
       </div>
 
       {/* Preferences */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold text-neutral mb-6">Preferences</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold text-neutral dark:text-gray-200 mb-6">Preferences</h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-neutral mb-2">Currency</label>
+            <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-2">Language</label>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value as "en" | "el")}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary">
+              <option value="en">English</option>
+              <option value="el">Ελληνικά (Greek)</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-2">Theme</label>
+            <select
+              value={theme}
+              onChange={(e) => setTheme(e.target.value as "light" | "dark")}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+            <p className="text-xs text-neutral-light dark:text-gray-400 mt-1">
+              {theme === "dark" ? "Dark theme helps reduce eye strain in low light" : "Light theme is the default appearance"}
+            </p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-2">Currency</label>
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary">
               <option value="EUR">EUR (€)</option>
               <option value="USD">USD ($)</option>
               <option value="GBP">GBP (£)</option>
@@ -222,20 +257,20 @@ export default function SettingsPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral mb-2">Date Format</label>
+            <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-2">Date Format</label>
             <select
               value={dateFormat}
               onChange={(e) => setDateFormat(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary">
               <option value="DD/MM/YYYY">DD/MM/YYYY (European)</option>
               <option value="MM/DD/YYYY">MM/DD/YYYY (US)</option>
               <option value="YYYY-MM-DD">YYYY-MM-DD (ISO)</option>
             </select>
           </div>
-          <div className="flex items-center justify-between py-3 border-t border-gray-100">
+          <div className="flex items-center justify-between py-3 border-t border-gray-100 dark:border-gray-700">
             <div>
-              <p className="font-medium text-neutral">Email Notifications</p>
-              <p className="text-sm text-neutral-light">Receive budget alerts and updates</p>
+              <p className="font-medium text-neutral dark:text-gray-200">Email Notifications</p>
+              <p className="text-sm text-neutral-light dark:text-gray-400">Receive budget alerts and updates</p>
             </div>
             <button className="bg-positive rounded-full w-12 h-6 relative">
               <div className="absolute right-1 top-1 bg-white rounded-full w-4 h-4"></div>

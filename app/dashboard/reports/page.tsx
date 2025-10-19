@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import * as XLSX from "xlsx";
 
 interface Transaction {
   id: string;
@@ -83,6 +84,79 @@ export default function ReportsPage() {
     }))
     .slice(-6); // Last 6 months
 
+  // Excel export function
+  const handleExportExcel = () => {
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+
+    // Sheet 1: Summary
+    const summaryData = [
+      ["Financial Summary Report"],
+      ["Generated on:", new Date().toLocaleDateString()],
+      [],
+      ["Metric", "Amount"],
+      ["Total Income", `€${totalIncome.toFixed(2)}`],
+      ["Total Expenses", `€${totalExpenses.toFixed(2)}`],
+      ["Net Income", `€${netIncome.toFixed(2)}`],
+      ["Savings Rate", `${savingsRate.toFixed(1)}%`],
+      [],
+      ["Transaction Count", transactions.length],
+      ["Income Transactions", transactions.filter((t) => t.type.toLowerCase() === "income").length],
+      ["Expense Transactions", transactions.filter((t) => t.type.toLowerCase() === "expense").length],
+    ];
+    const ws1 = XLSX.utils.aoa_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(wb, ws1, "Summary");
+
+    // Sheet 2: All Transactions
+    const transactionsData = [
+      ["Date", "Description", "Category", "Type", "Amount"],
+      ...transactions.map((t) => [
+        new Date(t.date).toLocaleDateString(),
+        t.description,
+        t.category,
+        t.type,
+        `€${t.amount.toFixed(2)}`,
+      ]),
+    ];
+    const ws2 = XLSX.utils.aoa_to_sheet(transactionsData);
+    XLSX.utils.book_append_sheet(wb, ws2, "Transactions");
+
+    // Sheet 3: Category Breakdown
+    if (categoryBreakdown.length > 0) {
+      const categoryData = [
+        ["Category", "Amount", "Percentage"],
+        ...categoryBreakdown.map((item) => [
+          item.category,
+          `€${item.amount.toFixed(2)}`,
+          `${item.percentage.toFixed(1)}%`,
+        ]),
+      ];
+      const ws3 = XLSX.utils.aoa_to_sheet(categoryData);
+      XLSX.utils.book_append_sheet(wb, ws3, "Categories");
+    }
+
+    // Sheet 4: Monthly Trends
+    if (monthlyTrends.length > 0) {
+      const monthlyData = [
+        ["Month", "Income", "Expenses", "Net"],
+        ...monthlyTrends.map((item) => [
+          item.month,
+          `€${item.income.toFixed(2)}`,
+          `€${item.expenses.toFixed(2)}`,
+          `€${item.net.toFixed(2)}`,
+        ]),
+      ];
+      const ws4 = XLSX.utils.aoa_to_sheet(monthlyData);
+      XLSX.utils.book_append_sheet(wb, ws4, "Monthly Trends");
+    }
+
+    // Generate file name with date
+    const fileName = `WealthFlow_Report_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+    // Export
+    XLSX.writeFile(wb, fileName);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -96,20 +170,12 @@ export default function ReportsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <h1 className="text-3xl font-bold text-neutral">Financial Reports</h1>
-        <div className="mt-4 md:mt-0 flex gap-3">
-          <button
-            onClick={() => alert("PDF export coming soon! 📊")}
-            className="bg-white hover:bg-gray-50 border border-gray-300 text-neutral px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer"
-          >
-            📊 Export PDF
-          </button>
-          <button
-            onClick={() => alert("Excel export coming soon! 📈")}
-            className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer"
-          >
-            📈 Export Excel
-          </button>
-        </div>
+        <button
+          onClick={handleExportExcel}
+          className="mt-4 md:mt-0 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer"
+        >
+          📊 Export to Excel
+        </button>
       </div>
 
       {/* Key Metrics */}
