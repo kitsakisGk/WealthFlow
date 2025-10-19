@@ -149,7 +149,7 @@ export default function SettingsPage() {
             {plan !== "FREE" && (
               <button
                 onClick={() => handleUpgrade("FREE")}
-                className="mt-4 w-full border border-neutral hover:bg-gray-50 text-neutral py-2 rounded-lg text-sm font-medium transition-colors">
+                className="mt-4 w-full border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-neutral dark:text-gray-300 py-2 rounded-lg text-sm font-medium transition-colors">
                 Downgrade to Free
               </button>
             )}

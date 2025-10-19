@@ -20,11 +20,12 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  transactions  Transaction[]
-  budgets       Budget[]
-  goals         Goal[]
-  categories    Category[]
-  bankAccounts  BankAccount[]
+  transactions     Transaction[]
+  monthlyBudgets   MonthlyBudget[]
+  subscriptions    Subscription[]
+  goals            Goal[]
+  categories       Category[]
+  bankAccounts     BankAccount[]
 
   @@map("users")
 }
@@ -64,25 +65,46 @@ enum TransactionType {
   EXPENSE
 }
 
-model Budget {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model MonthlyBudget {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  category    String
-  amount      Float
-  period      BudgetPeriod
-  startDate   DateTime
-  endDate     DateTime?
+  month             String   // Format: "2025-10" for October 2025
+  plannedIncome     Float
+  plannedExpenses   Float
+  actualIncome      Float    @default(0)
+  actualExpenses    Float    @default(0)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
+  @@unique([userId, month])
   @@index([userId])
-  @@map("budgets")
+  @@map("monthly_budgets")
 }
 
-enum BudgetPeriod {
+model Subscription {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name            String
+  amount          Float
+  billingCycle    BillingCycle
+  nextBillingDate DateTime
+  category        String
+  isActive        Boolean  @default(true)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([nextBillingDate])
+  @@map("subscriptions")
+}
+
+enum BillingCycle {
   WEEKLY
   MONTHLY
   YEARLY
