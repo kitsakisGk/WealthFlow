@@ -11,23 +11,41 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  name          String?
-  password      String
-  accountType   AccountType @default(PERSONAL)
-  plan          Plan      @default(FREE)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                String    @id @default(cuid())
+  email             String    @unique
+  name              String?
+  password          String
+  accountType       AccountType @default(PERSONAL)
+  plan              Plan      @default(FREE)
+  resetToken        String?
+  resetTokenExpiry  DateTime?
+  emailVerified     Boolean   @default(false)
+  verificationToken String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
-  transactions     Transaction[]
-  monthlyBudgets   MonthlyBudget[]
-  subscriptions    Subscription[]
-  goals            Goal[]
-  categories       Category[]
-  bankAccounts     BankAccount[]
+  transactions      Transaction[]
+  monthlyBudgets    MonthlyBudget[]
+  subscriptions     Subscription[]
+  goals             Goal[]
+  categories        Category[]
+  bankAccounts      BankAccount[]
+  activationTokens  ActivationToken[]
 
   @@map("users")
+}
+
+model ActivationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+  @@map("activation_tokens")
 }
 
 enum AccountType {

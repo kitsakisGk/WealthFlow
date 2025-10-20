@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Transaction {
   id: string;
@@ -12,26 +13,49 @@ interface Transaction {
   date: string;
 }
 
+interface BankAccount {
+  id: string;
+  bankName: string;
+  accountType: string;
+  balance: number;
+  accountNumber: string | null;
+}
+
+interface Goal {
+  id: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+}
+
 export default function ReportsPage() {
+  const { t } = useLanguage();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [accounts, setAccounts] = useState<BankAccount[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState("all");
 
   useEffect(() => {
-    const fetchTransactions = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch("/api/transactions");
-        if (response.ok) {
-          setTransactions(await response.json());
-        }
+        const [transRes, accountsRes, goalsRes] = await Promise.all([
+          fetch("/api/transactions"),
+          fetch("/api/accounts"),
+          fetch("/api/goals"),
+        ]);
+
+        if (transRes.ok) setTransactions(await transRes.json());
+        if (accountsRes.ok) setAccounts(await accountsRes.json());
+        if (goalsRes.ok) setGoals(await goalsRes.json());
       } catch (error) {
-        console.error("Error fetching transactions:", error);
+        console.error("Error fetching reports data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTransactions();
+    fetchData();
   }, []);
 
   // Calculate metrics
@@ -45,6 +69,14 @@ export default function ReportsPage() {
 
   const netIncome = totalIncome - totalExpenses;
   const savingsRate = totalIncome > 0 ? (netIncome / totalIncome) * 100 : 0;
+
+  // Calculate accounts total
+  const totalAccountBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
+
+  // Calculate goals progress
+  const totalGoalTarget = goals.reduce((sum, g) => sum + g.targetAmount, 0);
+  const totalGoalSaved = goals.reduce((sum, g) => sum + g.currentAmount, 0);
+  const goalProgressPercentage = totalGoalTarget > 0 ? (totalGoalSaved / totalGoalTarget) * 100 : 0;
 
   // Category breakdown
   const categoryData = transactions
@@ -150,6 +182,42 @@ export default function ReportsPage() {
       XLSX.utils.book_append_sheet(wb, ws4, "Monthly Trends");
     }
 
+    // Sheet 5: Bank Accounts
+    if (accounts.length > 0) {
+      const accountsData = [
+        ["Bank Name", "Account Type", "Balance"],
+        ...accounts.map((acc) => [
+          acc.bankName,
+          acc.accountType,
+          `€${acc.balance.toFixed(2)}`,
+        ]),
+        [],
+        ["Total Balance", "", `€${totalAccountBalance.toFixed(2)}`],
+      ];
+      const ws5 = XLSX.utils.aoa_to_sheet(accountsData);
+      XLSX.utils.book_append_sheet(wb, ws5, "Bank Accounts");
+    }
+
+    // Sheet 6: Savings Goals
+    if (goals.length > 0) {
+      const goalsData = [
+        ["Goal Name", "Target Amount", "Current Amount", "Progress %"],
+        ...goals.map((goal) => {
+          const progress = (goal.currentAmount / goal.targetAmount) * 100;
+          return [
+            goal.name,
+            `€${goal.targetAmount.toFixed(2)}`,
+            `€${goal.currentAmount.toFixed(2)}`,
+            `${progress.toFixed(1)}%`,
+          ];
+        }),
+        [],
+        ["Total Target", `€${totalGoalTarget.toFixed(2)}`, `€${totalGoalSaved.toFixed(2)}`, `${goalProgressPercentage.toFixed(1)}%`],
+      ];
+      const ws6 = XLSX.utils.aoa_to_sheet(goalsData);
+      XLSX.utils.book_append_sheet(wb, ws6, "Savings Goals");
+    }
+
     // Generate file name with date
     const fileName = `WealthFlow_Report_${new Date().toISOString().split('T')[0]}.xlsx`;
 
@@ -169,49 +237,49 @@ export default function ReportsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-        <h1 className="text-3xl font-bold text-neutral">Financial Reports</h1>
+        <h1 className="text-3xl font-bold text-neutral">{t("financialReports")}</h1>
         <button
           onClick={handleExportExcel}
           className="mt-4 md:mt-0 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer"
         >
-          📊 Export to Excel
+          📊 {t("exportToExcel")}
         </button>
       </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm font-medium text-neutral-light">Total Income</p>
+          <p className="text-sm font-medium text-neutral-light">{t("totalIncome")}</p>
           <p className="text-2xl font-bold text-positive mt-2">€{totalIncome.toFixed(2)}</p>
-          <p className="text-sm text-neutral-light mt-1">All time</p>
+          <p className="text-sm text-neutral-light mt-1">{t("allTime")}</p>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm font-medium text-neutral-light">Total Expenses</p>
+          <p className="text-sm font-medium text-neutral-light">{t("totalExpenses")}</p>
           <p className="text-2xl font-bold text-negative mt-2">€{totalExpenses.toFixed(2)}</p>
-          <p className="text-sm text-neutral-light mt-1">All time</p>
+          <p className="text-sm text-neutral-light mt-1">{t("allTime")}</p>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm font-medium text-neutral-light">Net Income</p>
+          <p className="text-sm font-medium text-neutral-light">{t("netIncome")}</p>
           <p className={`text-2xl font-bold mt-2 ${netIncome >= 0 ? "text-positive" : "text-negative"}`}>
             €{netIncome.toFixed(2)}
           </p>
-          <p className="text-sm text-neutral-light mt-1">Income - Expenses</p>
+          <p className="text-sm text-neutral-light mt-1">{t("incomeMinusExpenses")}</p>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm font-medium text-neutral-light">Savings Rate</p>
+          <p className="text-sm font-medium text-neutral-light">{t("savingsRate")}</p>
           <p className="text-2xl font-bold text-primary mt-2">{savingsRate.toFixed(1)}%</p>
-          <p className="text-sm text-neutral-light mt-1">Of total income</p>
+          <p className="text-sm text-neutral-light mt-1">{t("ofTotalIncome")}</p>
         </div>
       </div>
 
       {/* Category Breakdown */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-neutral mb-4">Spending by Category</h2>
+        <h2 className="text-lg font-semibold text-neutral mb-4">{t("spendingByCategory")}</h2>
         {categoryBreakdown.length === 0 ? (
-          <p className="text-neutral-light text-center py-8">No expense data yet</p>
+          <p className="text-neutral-light text-center py-8">{t("noExpensesYet")}</p>
         ) : (
           <div className="space-y-4">
             {categoryBreakdown.map((item) => (
@@ -266,22 +334,92 @@ export default function ReportsPage() {
         </div>
       )}
 
+      {/* Accounts & Goals Overview */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Bank Accounts */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-neutral dark:text-gray-200 mb-4">{t("bankAccounts")}</h2>
+          {accounts.length === 0 ? (
+            <p className="text-neutral-light dark:text-gray-400 text-center py-8">{t("noAccountsYet")}</p>
+          ) : (
+            <div className="space-y-3">
+              <div className="p-4 bg-primary/10 dark:bg-green-900/20 border border-primary/30 dark:border-green-600/30 rounded-lg">
+                <p className="text-sm text-neutral-light dark:text-gray-400 mb-1">Total Balance Across All Accounts</p>
+                <p className="text-3xl font-bold text-primary dark:text-green-400">€{totalAccountBalance.toFixed(2)}</p>
+                <p className="text-xs text-neutral-light dark:text-gray-500 mt-1">{accounts.length} account(s)</p>
+              </div>
+              <div className="space-y-2">
+                {accounts.map((account) => (
+                  <div key={account.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div>
+                      <p className="text-sm font-medium text-neutral dark:text-gray-200">{account.bankName}</p>
+                      <p className="text-xs text-neutral-light dark:text-gray-400 capitalize">{account.accountType.toLowerCase()}</p>
+                    </div>
+                    <p className="text-sm font-bold text-primary dark:text-green-400">€{account.balance.toFixed(2)}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Goals Progress */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-neutral dark:text-gray-200 mb-4">{t("savingsGoals")}</h2>
+          {goals.length === 0 ? (
+            <p className="text-neutral-light dark:text-gray-400 text-center py-8">{t("noGoalsYet")}</p>
+          ) : (
+            <div className="space-y-3">
+              <div className="p-4 bg-primary/10 dark:bg-green-900/20 border border-primary/30 dark:border-green-600/30 rounded-lg">
+                <p className="text-sm text-neutral-light dark:text-gray-400 mb-1">Overall Goal Progress</p>
+                <p className="text-3xl font-bold text-primary dark:text-green-400">{goalProgressPercentage.toFixed(0)}%</p>
+                <p className="text-xs text-neutral-light dark:text-gray-500 mt-1">
+                  €{totalGoalSaved.toFixed(2)} of €{totalGoalTarget.toFixed(2)}
+                </p>
+              </div>
+              <div className="space-y-2">
+                {goals.map((goal) => {
+                  const progress = (goal.currentAmount / goal.targetAmount) * 100;
+                  return (
+                    <div key={goal.id} className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-sm font-medium text-neutral dark:text-gray-200">{goal.name}</p>
+                        <p className="text-xs font-semibold text-primary dark:text-green-400">{progress.toFixed(0)}%</p>
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mb-1">
+                        <div
+                          className="bg-primary dark:bg-green-500 h-2 rounded-full"
+                          style={{ width: `${Math.min(progress, 100)}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-neutral-light dark:text-gray-400">
+                        €{goal.currentAmount.toFixed(2)} / €{goal.targetAmount.toFixed(2)}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Transaction Summary */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-neutral mb-4">Transaction Summary</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold text-neutral dark:text-gray-200 mb-4">Transaction Summary</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-neutral-light mb-1">Total Transactions</p>
-            <p className="text-3xl font-bold text-primary">{transactions.length}</p>
+          <div className="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <p className="text-sm text-neutral-light dark:text-gray-400 mb-1">Total Transactions</p>
+            <p className="text-3xl font-bold text-primary dark:text-green-400">{transactions.length}</p>
           </div>
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-neutral-light mb-1">Income Transactions</p>
+          <div className="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <p className="text-sm text-neutral-light dark:text-gray-400 mb-1">Income Transactions</p>
             <p className="text-3xl font-bold text-positive">
               {transactions.filter((t) => t.type.toLowerCase() === "income").length}
             </p>
           </div>
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-neutral-light mb-1">Expense Transactions</p>
+          <div className="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <p className="text-sm text-neutral-light dark:text-gray-400 mb-1">Expense Transactions</p>
             <p className="text-3xl font-bold text-negative">
               {transactions.filter((t) => t.type.toLowerCase() === "expense").length}
             </p>

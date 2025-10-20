@@ -58,20 +58,21 @@ export default function Sidebar() {
             })}
           </nav>
           <div className="flex-shrink-0 flex border-t border-white/20 p-4">
-            <div className="flex items-center w-full">
-              <div className="w-10 h-10 bg-positive rounded-full flex items-center justify-center text-white font-bold text-sm">
-                {initials}
-              </div>
-              <div className="ml-3 flex-1">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-positive rounded-full flex items-center justify-center text-white font-bold text-sm">
+                  {initials}
+                </div>
                 <p className="text-sm font-medium text-white truncate">{userName}</p>
-                <p className="text-xs text-white/70 truncate">{userEmail}</p>
               </div>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="text-white/70 hover:text-white transition-colors"
+                className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-lg transition-colors"
                 title="Logout"
               >
-                <span className="text-xl">⏻</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
               </button>
             </div>
           </div>

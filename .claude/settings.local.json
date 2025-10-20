@@ -24,7 +24,17 @@
       "Bash(timeout 5 bash -c \"while true; do sleep 1; done\")",
       "Bash(start http://localhost:3000)",
       "Bash(powershell -Command \"Start-Process ''http://localhost:3000''\")",
-      "Bash(del \"d:\\Projects\\Money_Master\\prisma\\migrations\\enable_rls_bank_accounts.sql\")"
+      "Bash(del \"d:\\Projects\\Money_Master\\prisma\\migrations\\enable_rls_bank_accounts.sql\")",
+      "Bash(npx kill-port 3000)",
+      "Bash(del \"d:\\Projects\\Money_Master\\app\\dashboard\\settings\\page.tsx\")",
+      "Bash(move \"d:\\Projects\\Money_Master\\app\\dashboard\\settings\\page_new.tsx\" \"d:\\Projects\\Money_Master\\app\\dashboard\\settings\\page.tsx\")",
+      "Bash(cd /d \"d:\\Projects\\Money_Master\")",
+      "Bash(timeout 3 cmd /c \"echo Waiting for server...\")",
+      "Bash(exit 0)",
+      "Bash(npx ts-node scripts/verify-user.ts)",
+      "Bash(stripe listen --forward-to localhost:3000/api/stripe/webhook)",
+      "Bash(stripe --version)",
+      "Bash(cat .env)"
     ],
     "deny": [],
     "ask": []

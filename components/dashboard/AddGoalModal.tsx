@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface AddGoalModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ export default function AddGoalModal({
   onClose,
   onSuccess,
 }: AddGoalModalProps) {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -60,7 +62,7 @@ export default function AddGoalModal({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-neutral dark:text-gray-200">New Goal</h2>
+          <h2 className="text-xl font-bold text-neutral dark:text-gray-200">{t("newGoal")}</h2>
           <button
             onClick={onClose}
             className="text-neutral dark:text-gray-400 hover:text-neutral-dark dark:hover:text-gray-200"
@@ -72,7 +74,7 @@ export default function AddGoalModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
-              Goal Name
+              {t("goalName")}
             </label>
             <input
               type="text"
@@ -82,13 +84,13 @@ export default function AddGoalModal({
                 setFormData({ ...formData, name: e.target.value })
               }
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent"
-              placeholder="e.g., Emergency Fund, Vacation"
+              placeholder={t("goalNamePlaceholder")}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
-              Target Amount (€)
+              {t("targetAmount")} (€)
             </label>
             <input
               type="number"
@@ -105,7 +107,7 @@ export default function AddGoalModal({
 
           <div>
             <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
-              Deadline (Optional)
+              {t("deadlineOptional")}
             </label>
             <input
               type="date"
@@ -123,14 +125,14 @@ export default function AddGoalModal({
               onClick={onClose}
               className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-neutral dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
             >
-              Cancel
+              {t("cancel")}
             </button>
             <button
               type="submit"
               disabled={loading}
               className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark disabled:opacity-50"
             >
-              {loading ? "Creating..." : "Create Goal"}
+              {loading ? t("creating") : t("createGoalButton")}
             </button>
           </div>
         </form>

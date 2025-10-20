@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
 
 interface Transaction {
   id: string;
@@ -13,11 +14,28 @@ interface Transaction {
   date: string;
 }
 
-interface Budget {
+interface MonthlyBudget {
   id: string;
-  category: string;
+  month: string;
+  plannedIncome: number;
+  plannedExpenses: number;
+  actualIncome: number;
+  actualExpenses: number;
+}
+
+interface Subscription {
+  id: string;
+  name: string;
   amount: number;
-  period: string;
+  billingCycle: string;
+  category: string;
+  isActive: boolean;
+}
+
+interface BankAccount {
+  id: string;
+  bankName: string;
+  balance: number;
 }
 
 interface Goal {
@@ -30,21 +48,32 @@ interface Goal {
 export default function DashboardPage() {
   const { t } = useLanguage();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [monthlyBudget, setMonthlyBudget] = useState<MonthlyBudget | null>(null);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [accounts, setAccounts] = useState<BankAccount[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const currentMonth = new Date().toISOString().slice(0, 7);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [transRes, budgetRes, goalRes] = await Promise.all([
+        const [transRes, budgetRes, subsRes, accountsRes, goalRes] = await Promise.all([
           fetch("/api/transactions"),
-          fetch("/api/budgets"),
+          fetch(`/api/budgets?month=${currentMonth}`),
+          fetch("/api/subscriptions"),
+          fetch("/api/accounts"),
           fetch("/api/goals"),
         ]);
 
         if (transRes.ok) setTransactions(await transRes.json());
-        if (budgetRes.ok) setBudgets(await budgetRes.json());
+        if (budgetRes.ok) {
+          const data = await budgetRes.json();
+          if (data) setMonthlyBudget(data);
+        }
+        if (subsRes.ok) setSubscriptions(await subsRes.json());
+        if (accountsRes.ok) setAccounts(await accountsRes.json());
         if (goalRes.ok) setGoals(await goalRes.json());
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -54,7 +83,7 @@ export default function DashboardPage() {
     };
 
     fetchData();
-  }, []);
+  }, [currentMonth]);
 
   // Calculate stats
   const totalIncome = transactions
@@ -89,6 +118,33 @@ export default function DashboardPage() {
     .slice(0, 4);
 
   const maxCategoryAmount = Math.max(...topCategories.map((c) => c[1]), 1);
+
+  // Prepare data for Pie Chart
+  const COLORS = ["#10B981", "#3B82F6", "#F59E0B", "#EF4444", "#8B5CF6", "#EC4899"];
+  const pieChartData = topCategories.map(([category, amount], index) => ({
+    name: category,
+    value: amount,
+    color: COLORS[index % COLORS.length]
+  }));
+
+  // Prepare data for Line Chart (last 7 days)
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - i));
+    return date.toISOString().split('T')[0];
+  });
+
+  const lineChartData = last7Days.map(date => {
+    const dayTransactions = transactions.filter(t => t.date.startsWith(date));
+    const income = dayTransactions.filter(t => t.type.toLowerCase() === 'income').reduce((sum, t) => sum + t.amount, 0);
+    const expense = dayTransactions.filter(t => t.type.toLowerCase() === 'expense').reduce((sum, t) => sum + t.amount, 0);
+
+    return {
+      date: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      income,
+      expense
+    };
+  });
 
   if (loading) {
     return (
@@ -161,28 +217,29 @@ export default function DashboardPage() {
               {t("viewAll")}
             </Link>
           </div>
-          {topCategories.length === 0 ? (
+          {pieChartData.length === 0 ? (
             <p className="text-neutral-light dark:text-gray-400 text-center py-8">{t("noExpensesYet")}</p>
           ) : (
-            <div className="space-y-4">
-              {topCategories.map(([category, amount]) => {
-                const percent = (amount / maxCategoryAmount) * 100;
-                return (
-                  <div key={category}>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-sm font-medium text-neutral dark:text-gray-300">{category}</span>
-                      <span className="text-sm font-semibold text-neutral dark:text-gray-200">€{amount.toFixed(2)}</span>
-                    </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div
-                        className="bg-primary dark:bg-green-500 h-2 rounded-full"
-                        style={{ width: `${percent}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={pieChartData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {pieChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
           )}
         </div>
 
@@ -229,65 +286,160 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Active Budgets & Goals */}
+      {/* Income vs Expenses Trend (Last 7 Days) */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h3 className="text-lg font-semibold text-neutral dark:text-gray-200 mb-4">Income vs Expenses (Last 7 Days)</h3>
+        {lineChartData.every(d => d.income === 0 && d.expense === 0) ? (
+          <p className="text-neutral-light dark:text-gray-400 text-center py-8">{t("noTransactionsYet")}</p>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={lineChartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} />
+              <XAxis
+                dataKey="date"
+                stroke="#6B7280"
+                style={{ fontSize: '12px' }}
+              />
+              <YAxis
+                stroke="#6B7280"
+                style={{ fontSize: '12px' }}
+                tickFormatter={(value) => `€${value}`}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#1F2937',
+                  border: 'none',
+                  borderRadius: '8px',
+                  color: '#F3F4F6'
+                }}
+                formatter={(value) => [`€${Number(value).toFixed(2)}`, '']}
+              />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="income"
+                stroke="#10B981"
+                strokeWidth={2}
+                dot={{ fill: '#10B981', r: 4 }}
+                activeDot={{ r: 6 }}
+                name={t("income")}
+              />
+              <Line
+                type="monotone"
+                dataKey="expense"
+                stroke="#EF4444"
+                strokeWidth={2}
+                dot={{ fill: '#EF4444', r: 4 }}
+                activeDot={{ r: 6 }}
+                name={t("expenses")}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+      </div>
+
+      {/* Monthly Budget & Subscriptions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Active Budgets */}
-        <div className="bg-white rounded-lg shadow p-6">
+        {/* Monthly Budget Summary */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-neutral">{t("activeBudgets")}</h3>
-            <Link href="/dashboard/budgets" className="text-sm text-primary hover:underline">
+            <h3 className="text-lg font-semibold text-neutral dark:text-gray-200">{t("monthlyBudgetPlanner")}</h3>
+            <Link href="/dashboard/budgets" className="text-sm text-primary dark:text-green-400 hover:underline">
               {t("viewAll")}
             </Link>
           </div>
-          {budgets.length === 0 ? (
-            <p className="text-neutral-light text-center py-8">{t("noBudgetsYet")}</p>
+          {!monthlyBudget ? (
+            <p className="text-neutral-light dark:text-gray-400 text-center py-8">{t("noBudgetForMonth")}</p>
           ) : (
             <div className="space-y-3">
-              {budgets.slice(0, 3).map((budget) => (
-                <div key={budget.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="text-sm font-medium text-neutral">{budget.category}</p>
-                    <p className="text-xs text-neutral-light capitalize">{budget.period.toLowerCase()}</p>
-                  </div>
-                  <p className="text-sm font-semibold text-primary">€{budget.amount.toFixed(2)}</p>
+              <div className="p-3 bg-primary/5 dark:bg-green-900/10 border border-primary/20 dark:border-green-600/20 rounded-lg">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs text-neutral-light dark:text-gray-400">{t("plannedBalance")}</p>
+                  <p className="text-sm font-bold text-primary dark:text-green-400">
+                    €{(monthlyBudget.plannedIncome - monthlyBudget.plannedExpenses).toFixed(2)}
+                  </p>
                 </div>
-              ))}
+                <div className="text-xs text-neutral-light dark:text-gray-500">
+                  €{monthlyBudget.plannedIncome.toFixed(2)} - €{monthlyBudget.plannedExpenses.toFixed(2)}
+                </div>
+              </div>
+              <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs text-neutral-light dark:text-gray-400">{t("actualBalance")}</p>
+                  <p className={`text-sm font-bold ${
+                    monthlyBudget.actualIncome - monthlyBudget.actualExpenses >= 0
+                      ? "text-positive"
+                      : "text-negative"
+                  }`}>
+                    €{(monthlyBudget.actualIncome - monthlyBudget.actualExpenses).toFixed(2)}
+                  </p>
+                </div>
+                <div className="text-xs text-neutral-light dark:text-gray-500">
+                  €{monthlyBudget.actualIncome.toFixed(2)} - €{monthlyBudget.actualExpenses.toFixed(2)}
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-2 bg-gray-100 dark:bg-gray-700 rounded">
+                <span className="text-xs font-medium text-neutral dark:text-gray-300">{t("variance")}</span>
+                <span className={`text-xs font-bold ${
+                  (monthlyBudget.actualIncome - monthlyBudget.actualExpenses) - (monthlyBudget.plannedIncome - monthlyBudget.plannedExpenses) >= 0
+                    ? "text-positive"
+                    : "text-negative"
+                }`}>
+                  €{((monthlyBudget.actualIncome - monthlyBudget.actualExpenses) - (monthlyBudget.plannedIncome - monthlyBudget.plannedExpenses)).toFixed(2)}
+                </span>
+              </div>
             </div>
           )}
         </div>
 
-        {/* Active Goals */}
-        <div className="bg-white rounded-lg shadow p-6">
+        {/* Active Subscriptions */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-neutral">{t("activeGoals")}</h3>
-            <Link href="/dashboard/goals" className="text-sm text-primary hover:underline">
+            <h3 className="text-lg font-semibold text-neutral dark:text-gray-200">{t("recurringPayments")}</h3>
+            <Link href="/dashboard/budgets" className="text-sm text-primary dark:text-green-400 hover:underline">
               {t("viewAll")}
             </Link>
           </div>
-          {goals.length === 0 ? (
-            <p className="text-neutral-light text-center py-8">{t("noGoalsYet")}</p>
+          {subscriptions.length === 0 ? (
+            <p className="text-neutral-light dark:text-gray-400 text-center py-8">{t("noSubscriptionsYet")}</p>
           ) : (
             <div className="space-y-3">
-              {goals.slice(0, 3).map((goal) => {
-                const progress = (goal.currentAmount / goal.targetAmount) * 100;
+              {subscriptions.filter(s => s.isActive).slice(0, 4).map((sub) => {
+                const monthlyAmount =
+                  sub.billingCycle === "MONTHLY" ? sub.amount :
+                  sub.billingCycle === "YEARLY" ? sub.amount / 12 :
+                  sub.billingCycle === "WEEKLY" ? sub.amount * 4 :
+                  sub.amount;
+
                 return (
-                  <div key={goal.id} className="p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="text-sm font-medium text-neutral">{goal.name}</p>
-                      <p className="text-xs text-primary font-semibold">{progress.toFixed(0)}%</p>
+                  <div key={sub.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div>
+                      <p className="text-sm font-medium text-neutral dark:text-gray-200">{sub.name}</p>
+                      <p className="text-xs text-neutral-light dark:text-gray-400">{sub.category}</p>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-positive h-2 rounded-full"
-                        style={{ width: `${Math.min(progress, 100)}%` }}
-                      ></div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-negative dark:text-red-400">€{sub.amount.toFixed(2)}</p>
+                      <p className="text-xs text-neutral-light dark:text-gray-500 capitalize">{sub.billingCycle.toLowerCase()}</p>
                     </div>
-                    <p className="text-xs text-neutral-light mt-1">
-                      €{goal.currentAmount.toFixed(2)} / €{goal.targetAmount.toFixed(2)}
-                    </p>
                   </div>
                 );
               })}
+              <div className="pt-2 border-t border-gray-200 dark:border-gray-600">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-neutral dark:text-gray-300">{t("monthlyTotal")}</span>
+                  <span className="text-sm font-bold text-negative dark:text-red-400">
+                    €{subscriptions
+                      .filter(s => s.isActive)
+                      .reduce((sum, s) => {
+                        if (s.billingCycle === "MONTHLY") return sum + s.amount;
+                        if (s.billingCycle === "YEARLY") return sum + s.amount / 12;
+                        if (s.billingCycle === "WEEKLY") return sum + s.amount * 4;
+                        return sum;
+                      }, 0)
+                      .toFixed(2)}
+                  </span>
+                </div>
+              </div>
             </div>
           )}
         </div>

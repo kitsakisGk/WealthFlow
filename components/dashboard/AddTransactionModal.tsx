@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface AddTransactionModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ export default function AddTransactionModal({
   onClose,
   onSuccess,
 }: AddTransactionModalProps) {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     amount: "",
@@ -64,7 +66,7 @@ export default function AddTransactionModal({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-neutral dark:text-gray-200">Add Transaction</h2>
+          <h2 className="text-xl font-bold text-neutral dark:text-gray-200">{t("addTransaction")}</h2>
           <button
             onClick={onClose}
             className="text-neutral dark:text-gray-400 hover:text-neutral-dark dark:hover:text-gray-200"
@@ -76,7 +78,7 @@ export default function AddTransactionModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
-              Type
+              {t("type")}
             </label>
             <div className="flex gap-2">
               <button
@@ -88,7 +90,7 @@ export default function AddTransactionModal({
                     : "bg-gray-200 dark:bg-gray-700 text-neutral dark:text-gray-300"
                 }`}
               >
-                Expense
+                {t("expenses")}
               </button>
               <button
                 type="button"
@@ -99,14 +101,14 @@ export default function AddTransactionModal({
                     : "bg-gray-200 dark:bg-gray-700 text-neutral dark:text-gray-300"
                 }`}
               >
-                Income
+                {t("income")}
               </button>
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
-              Amount (€)
+              {t("amount")} (€)
             </label>
             <input
               type="number"
@@ -123,7 +125,7 @@ export default function AddTransactionModal({
 
           <div>
             <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
-              Description
+              {t("description")}
             </label>
             <input
               type="text"
@@ -139,7 +141,7 @@ export default function AddTransactionModal({
 
           <div>
             <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
-              Category
+              {t("category")}
             </label>
             <select
               value={formData.category}
@@ -148,22 +150,22 @@ export default function AddTransactionModal({
               }
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent"
             >
-              <option value="">Select category</option>
-              <option value="Food & Dining">Food & Dining</option>
-              <option value="Transportation">Transportation</option>
-              <option value="Shopping">Shopping</option>
-              <option value="Entertainment">Entertainment</option>
-              <option value="Bills & Utilities">Bills & Utilities</option>
-              <option value="Healthcare">Healthcare</option>
-              <option value="Salary">Salary</option>
-              <option value="Business">Business</option>
-              <option value="Other">Other</option>
+              <option value="">{t("selectCategory")}</option>
+              <option value="Food & Dining">{t("foodDining")}</option>
+              <option value="Transportation">{t("transportation")}</option>
+              <option value="Shopping">{t("shopping")}</option>
+              <option value="Entertainment">{t("entertainment")}</option>
+              <option value="Bills & Utilities">{t("billsUtilities")}</option>
+              <option value="Healthcare">{t("healthcare")}</option>
+              <option value="Salary">{t("salary")}</option>
+              <option value="Business">{t("business")}</option>
+              <option value="Other">{t("other")}</option>
             </select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
-              Date
+              {t("date")}
             </label>
             <input
               type="date"
@@ -182,14 +184,14 @@ export default function AddTransactionModal({
               onClick={onClose}
               className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-neutral dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
             >
-              Cancel
+              {t("cancel")}
             </button>
             <button
               type="submit"
               disabled={loading}
               className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark disabled:opacity-50"
             >
-              {loading ? "Adding..." : "Add Transaction"}
+              {loading ? t("adding") : t("addTransaction")}
             </button>
           </div>
         </form>

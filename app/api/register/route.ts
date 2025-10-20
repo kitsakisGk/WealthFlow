@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
+import { sendVerificationEmail } from "@/lib/email";
 
 export async function POST(request: Request) {
   try {
@@ -31,6 +33,9 @@ export async function POST(request: Request) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // Generate verification token
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+
     // Create user
     const user = await prisma.user.create({
       data: {
@@ -39,8 +44,13 @@ export async function POST(request: Request) {
         password: hashedPassword,
         accountType: accountType || "PERSONAL",
         plan: plan || "FREE",
+        verificationToken,
+        emailVerified: false,
       },
     });
+
+    // Send verification email
+    await sendVerificationEmail(email, verificationToken);
 
     return NextResponse.json(
       {
@@ -49,6 +59,7 @@ export async function POST(request: Request) {
           email: user.email,
           name: user.name,
         },
+        message: "Registration successful. Please check your email to verify your account.",
       },
       { status: 201 }
     );
