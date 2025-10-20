@@ -122,6 +122,13 @@ const translations = {
     budgetOverview: "Budget Overview",
     goalsBreakdown: "Goals Breakdown",
 
+    // Budget Spending
+    recordSpending: "Record Spending",
+    recordExpense: "Record Expense",
+    recording: "Recording...",
+    optionalDescription: "Optional description",
+    spendMoney: "Record Expense",
+
     // Settings
     profile: "Profile Information",
     profileInformation: "Profile Information",
@@ -377,6 +384,13 @@ const translations = {
     transactionTrends: "Τάσεις Συναλλαγών",
     budgetOverview: "Επισκόπηση Προϋπολογισμού",
     goalsBreakdown: "Ανάλυση Στόχων",
+
+    // Budget Spending
+    recordSpending: "Καταγραφή Δαπάνης",
+    recordExpense: "Καταγραφή Εξόδου",
+    recording: "Καταγραφή...",
+    optionalDescription: "Προαιρετική περιγραφή",
+    spendMoney: "Καταγραφή Εξόδου",
 
     // Settings
     profile: "Πληροφορίες Προφίλ",

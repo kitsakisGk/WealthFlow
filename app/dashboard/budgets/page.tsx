@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import RecordSpendingModal from "@/components/dashboard/RecordSpendingModal";
 
 interface MonthlyBudget {
   id: string;
@@ -30,6 +31,7 @@ export default function BudgetsPage() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [showBudgetModal, setShowBudgetModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  const [showSpendingModal, setShowSpendingModal] = useState(false);
   const [budgetForm, setBudgetForm] = useState({
     plannedIncome: "",
     plannedExpenses: "",
@@ -203,6 +205,18 @@ export default function BudgetsPage() {
             </div>
           </div>
         )}
+
+        {/* Record Expense Button */}
+        {currentBudget && (
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={() => setShowSpendingModal(true)}
+              className="bg-white text-negative px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-md"
+            >
+              {t("spendMoney")}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Budget Visualization */}
@@ -211,39 +225,39 @@ export default function BudgetsPage() {
           {
             category: t("plannedIncome"),
             amount: currentBudget.plannedIncome,
-            color: "#10B981"
+            color: "#059669"
           },
           {
             category: t("plannedExpenses"),
             amount: currentBudget.plannedExpenses,
-            color: "#EF4444"
+            color: "#DC2626"
           },
           {
             category: t("actualIncome"),
             amount: currentBudget.actualIncome,
-            color: "#3B82F6"
+            color: "#10B981"
           },
           {
             category: t("actualExpenses"),
             amount: currentBudget.actualExpenses,
-            color: "#F59E0B"
+            color: "#EF4444"
           }
         ];
 
         return (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-neutral dark:text-gray-200 mb-4">{t("budgetOverview")}</h3>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={200}>
               <BarChart data={budgetChartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} />
                 <XAxis
                   dataKey="category"
                   stroke="#6B7280"
-                  style={{ fontSize: '12px' }}
+                  style={{ fontSize: '11px' }}
                 />
                 <YAxis
                   stroke="#6B7280"
-                  style={{ fontSize: '12px' }}
+                  style={{ fontSize: '11px' }}
                   tickFormatter={(value) => `€${value}`}
                 />
                 <Tooltip
@@ -457,6 +471,15 @@ export default function BudgetsPage() {
           </div>
         </div>
       )}
+
+      {/* Record Spending Modal */}
+      <RecordSpendingModal
+        isOpen={showSpendingModal}
+        onClose={() => setShowSpendingModal(false)}
+        onSuccess={fetchData}
+        budgetId={currentBudget?.id || ""}
+        currentMonth={currentMonth}
+      />
     </div>
   );
 }

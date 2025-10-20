@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Budget {
   id: string;
@@ -25,12 +27,26 @@ interface Goal {
 }
 
 export default function Header() {
+  const pathname = usePathname();
+  const { t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
   const notificationRef = useRef<HTMLDivElement>(null);
+
+  // Get page title based on current route
+  const getPageTitle = () => {
+    if (pathname === "/dashboard") return t("dashboard");
+    if (pathname === "/dashboard/transactions") return t("transactions");
+    if (pathname === "/dashboard/budgets") return t("budgets");
+    if (pathname === "/dashboard/goals") return t("goals");
+    if (pathname === "/dashboard/accounts") return t("accounts");
+    if (pathname === "/dashboard/reports") return t("reports");
+    if (pathname === "/dashboard/settings") return t("settings");
+    return t("dashboard");
+  };
 
   // Fetch data for notifications
   useEffect(() => {
@@ -102,7 +118,7 @@ export default function Header() {
           >
             <span className="text-2xl">☰</span>
           </button>
-          <h2 className="text-2xl font-semibold text-neutral dark:text-gray-200">Dashboard</h2>
+          <h2 className="text-2xl font-semibold text-neutral dark:text-gray-200">{getPageTitle()}</h2>
         </div>
 
         <div className="flex items-center space-x-4">
