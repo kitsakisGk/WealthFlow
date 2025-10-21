@@ -55,7 +55,8 @@
       "Bash(copy \"C:\\Users\\admin\\OneDrive\\Υπολογιστής\\Luminus\\small_logo.jpg\" \"d:\\Projects\\Money_Master\\public\\luminus-logo-small.jpg\")",
       "Bash(cmd /c \"copy \"\"C:\\Users\\admin\\OneDrive\\Υπολογιστής\\Luminus\\Logo.png\"\" \"\"d:\\Projects\\Money_Master\\public\\luminus-logo.png\"\" && copy \"\"C:\\Users\\admin\\OneDrive\\Υπολογιστής\\Luminus\\small_logo.jpg\"\" \"\"d:\\Projects\\Money_Master\\public\\luminus-logo-small.jpg\"\"\")",
       "Read(//c/Users/admin/OneDrive/Υπολογιστής/Luminus/**)",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(cmd /c \"taskkill //F //IM node.exe\")"
     ],
     "deny": [],
     "ask": []
