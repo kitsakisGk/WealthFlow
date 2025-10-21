@@ -276,9 +276,13 @@ export default function LoginPage() {
       </div>
 
       {/* Powered by Luminus footer */}
-      <div className="mt-8 flex items-center justify-center gap-2">
-        <span className="text-sm text-neutral-light">Powered by</span>
-        <Image src="/luminus-logo-small.jpg" alt="Luminus" width={80} height={24} className="h-6 w-auto" />
+      <div className="mt-8 text-center">
+        <p className="text-sm text-neutral-light">
+          Powered by{" "}
+          <span className="font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">
+            Luminus
+          </span>
+        </p>
       </div>
     </div>
   );
