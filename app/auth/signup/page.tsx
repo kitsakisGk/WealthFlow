@@ -97,14 +97,11 @@ export default function SignupPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <Link href="/" className="flex justify-center">
-            <Image src="/luminus-logo.png" alt="Luminus" width={200} height={60} className="h-16 w-auto" />
+            <h1 className="text-4xl font-bold text-primary">WealthFlow</h1>
           </Link>
-          <h2 className="mt-8 text-center text-2xl font-bold text-neutral">
-            WealthFlow
-          </h2>
-          <h3 className="mt-2 text-center text-xl font-semibold text-neutral">
+          <h2 className="mt-6 text-center text-3xl font-bold text-neutral">
             Create your account
-          </h3>
+          </h2>
           <p className="mt-2 text-center text-sm text-neutral-light">
             Already have an account?{" "}
             <Link
@@ -322,13 +319,9 @@ export default function SignupPage() {
       </div>
 
       {/* Powered by Luminus footer */}
-      <div className="mt-8 text-center">
-        <p className="text-sm text-neutral-light">
-          Powered by{" "}
-          <span className="font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">
-            Luminus
-          </span>
-        </p>
+      <div className="mt-8 flex items-center justify-center gap-2">
+        <span className="text-sm text-neutral-light">Powered by</span>
+        <Image src="/luminus-logo-small.jpg" alt="Luminus" width={80} height={24} className="h-6 w-auto" />
       </div>
     </div>
   );
