@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -34,10 +34,17 @@ export default function SettingsPage() {
   const userName = session?.user?.name || "";
   const userEmail = session?.user?.email || "";
 
-  const handleUpgrade = async (selectedPlan: "PRO" | "BUSINESS") => {
+  const handleUpgrade = async (selectedPlan: "PRO" | "BUSINESS" | "FREE") => {
     setUpgradingPlan(selectedPlan);
 
     try {
+      // If downgrading to FREE, handle it differently
+      if (selectedPlan === "FREE") {
+        setShowCancelConfirm(true);
+        setUpgradingPlan(null);
+        return;
+      }
+
       // Get the correct price ID based on plan and billing period
       const priceIds = {
         PRO: {
@@ -80,9 +87,53 @@ export default function SettingsPage() {
     setShowCancelConfirm(false);
   };
 
-  const handleSavePreferences = () => {
-    setShowPreferencesSaved(true);
-    setTimeout(() => setShowPreferencesSaved(false), 3000);
+  // Load user preferences from database
+  useEffect(() => {
+    const loadPreferences = async () => {
+      try {
+        const response = await fetch("/api/user/preferences");
+        if (response.ok) {
+          const data = await response.json();
+          setAccountType(data.accountType || "PERSONAL");
+          setTheme(data.theme || "light");
+          setLanguage(data.language || "en");
+          setCurrency(data.currency || "EUR");
+          setDateFormat(data.dateFormat || "DD/MM/YYYY");
+        }
+      } catch (error) {
+        console.error("Error loading preferences:", error);
+      }
+    };
+
+    if (session?.user) {
+      loadPreferences();
+    }
+  }, [session]);
+
+  const handleSavePreferences = async () => {
+    try {
+      const response = await fetch("/api/user/preferences", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          accountType,
+          theme,
+          language,
+          currency,
+          dateFormat,
+        }),
+      });
+
+      if (response.ok) {
+        setShowPreferencesSaved(true);
+        setTimeout(() => setShowPreferencesSaved(false), 3000);
+      } else {
+        alert("Failed to save preferences");
+      }
+    } catch (error) {
+      console.error("Error saving preferences:", error);
+      alert("Error saving preferences");
+    }
   };
 
   const handleChangePassword = async () => {

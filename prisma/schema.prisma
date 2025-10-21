@@ -17,6 +17,10 @@ model User {
   password          String
   accountType       AccountType @default(PERSONAL)
   plan              Plan      @default(FREE)
+  theme             String    @default("light")
+  language          String    @default("en")
+  currency          String    @default("EUR")
+  dateFormat        String    @default("DD/MM/YYYY")
   resetToken        String?
   resetTokenExpiry  DateTime?
   emailVerified     Boolean   @default(false)

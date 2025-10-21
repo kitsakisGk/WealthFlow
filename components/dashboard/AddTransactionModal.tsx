@@ -158,7 +158,7 @@ export default function AddTransactionModal({
               <option value="Bills & Utilities">{t("billsUtilities")}</option>
               <option value="Healthcare">{t("healthcare")}</option>
               <option value="Salary">{t("salary")}</option>
-              <option value="Business">{t("business")}</option>
+              <option value="Business">{t("businessCategory")}</option>
               <option value="Other">{t("other")}</option>
             </select>
           </div>
