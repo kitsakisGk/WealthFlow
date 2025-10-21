@@ -97,7 +97,7 @@ export default function SignupPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <Link href="/" className="flex justify-center mb-8">
-            <Image src="/wealthflow-logo.png" alt="WealthFlow" width={200} height={60} className="h-20 w-auto" />
+            <Image src="/transparent.png" alt="WealthFlow" width={300} height={100} className="h-32 w-auto" />
           </Link>
           <h2 className="mt-6 text-center text-3xl font-bold text-neutral">
             Create your account

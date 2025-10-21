@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Budget {
@@ -118,7 +119,7 @@ export default function Header() {
           >
             <span className="text-2xl">☰</span>
           </button>
-          <h2 className="text-2xl font-semibold text-neutral dark:text-gray-200">{getPageTitle()}</h2>
+          <Image src="/transparent.png" alt="WealthFlow" width={150} height={50} className="h-12 w-auto" />
         </div>
 
         <div className="flex items-center space-x-4">

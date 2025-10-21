@@ -254,7 +254,7 @@ export default function Home() {
       <footer className="bg-neutral text-white py-8 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-neutral-light">
-            &copy; 2025 WealthFlow System. All rights reserved.
+            &copy; 2025 WealthFlow System. All rights reserved.copy; 2025 WealthFlow System. All rights reserved.</p><p className="text-sm text-neutral-light mt-2">Powered by <span className="font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">Luminus</span>
           </p>
         </div>
       </footer>
