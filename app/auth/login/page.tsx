@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 
@@ -93,15 +94,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <Link href="/" className="flex justify-center">
-            <h1 className="text-4xl font-bold text-primary">WealthFlow</h1>
+            <Image src="/luminus-logo.png" alt="Luminus" width={200} height={60} className="h-16 w-auto" />
           </Link>
-          <h2 className="mt-6 text-center text-3xl font-bold text-neutral">
-            Sign in to your account
+          <h2 className="mt-8 text-center text-2xl font-bold text-neutral">
+            WealthFlow
           </h2>
+          <h3 className="mt-2 text-center text-xl font-semibold text-neutral">
+            Sign in to your account
+          </h3>
           <p className="mt-2 text-center text-sm text-neutral-light">
             Or{" "}
             <Link
@@ -272,6 +276,16 @@ export default function LoginPage() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Powered by Luminus footer */}
+      <div className="mt-8 text-center">
+        <p className="text-sm text-neutral-light">
+          Powered by{" "}
+          <span className="font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">
+            Luminus
+          </span>
+        </p>
       </div>
     </div>
   );

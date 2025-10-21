@@ -2,20 +2,21 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import Image from "next/image";
+import { useSearchParams, useRouter } from "next/navigation";
 
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
-  const token = searchParams.get("token");
-
+  const router = useRouter();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [message, setMessage] = useState("");
+  const token = searchParams.get("token");
 
   useEffect(() => {
     const verifyEmail = async () => {
       if (!token) {
         setStatus("error");
-        setMessage("Invalid verification link. No token provided.");
+        setMessage("Invalid verification link");
         return;
       }
 
@@ -30,161 +31,84 @@ export default function VerifyEmailPage() {
 
         if (response.ok) {
           setStatus("success");
-          setMessage(data.message || "Email verified successfully!");
+          setMessage("Email verified successfully! Redirecting to login...");
+          setTimeout(() => {
+            router.push("/auth/login");
+          }, 3000);
         } else {
           setStatus("error");
-          setMessage(data.error || "Verification failed. Please try again.");
+          setMessage(data.error || "Verification failed");
         }
       } catch (error) {
         setStatus("error");
-        setMessage("An error occurred during verification. Please try again.");
+        setMessage("An error occurred during verification");
       }
     };
 
     verifyEmail();
-  }, [token]);
+  }, [token, router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 text-center">
         <div>
           <Link href="/" className="flex justify-center">
-            <h1 className="text-4xl font-bold text-primary">WealthFlow</h1>
+            <Image src="/luminus-logo.png" alt="Luminus" width={200} height={60} className="h-16 w-auto" />
           </Link>
-
-          {/* Status Icon */}
-          <div className="mt-8 flex justify-center">
-            {status === "loading" && (
-              <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-12 h-12 text-blue-600 animate-spin"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
-              </div>
-            )}
-
-            {status === "success" && (
-              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-12 h-12 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-            )}
-
-            {status === "error" && (
-              <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-12 h-12 text-red-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </div>
-            )}
-          </div>
-
-          <h2 className="mt-6 text-center text-3xl font-bold text-neutral">
-            {status === "loading" && "Verifying Your Email..."}
-            {status === "success" && "Email Verified!"}
-            {status === "error" && "Verification Failed"}
+          <h2 className="mt-8 text-center text-2xl font-bold text-neutral">
+            WealthFlow
           </h2>
-
-          <p className="mt-4 text-center text-base text-neutral-light">
-            {message}
-          </p>
         </div>
 
-        {status === "success" && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-left space-y-4">
-            <h3 className="font-semibold text-neutral">Your account is now active!</h3>
-            <p className="text-sm text-neutral-light">
-              You can now sign in to WealthFlow and start managing your finances.
-            </p>
-          </div>
-        )}
-
-        {status === "error" && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-left space-y-4">
-            <h3 className="font-semibold text-neutral">Common Issues:</h3>
-            <ul className="list-disc list-inside space-y-2 text-sm text-neutral-light">
-              <li>The verification link may have expired (links are valid for 24 hours)</li>
-              <li>The link may have already been used</li>
-              <li>The link may be incomplete or corrupted</li>
-            </ul>
-            <p className="text-sm text-neutral-light mt-4">
-              Please try signing up again or contact support if the problem persists.
-            </p>
-          </div>
-        )}
-
-        <div className="space-y-3">
-          {status === "success" && (
-            <Link
-              href="/auth/login"
-              className="block w-full px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium"
-            >
-              Sign In to Your Account
-            </Link>
-          )}
-
-          {status === "error" && (
-            <div className="space-y-3">
-              <Link
-                href="/auth/signup"
-                className="block w-full px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium"
-              >
-                Sign Up Again
-              </Link>
-              <Link
-                href="/auth/login"
-                className="block w-full px-6 py-3 border border-gray-300 text-neutral rounded-lg hover:bg-gray-50 font-medium"
-              >
-                Try to Sign In
-              </Link>
+        <div className="bg-white rounded-lg shadow-md p-8">
+          {status === "loading" && (
+            <div>
+              <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <h3 className="text-xl font-bold text-neutral mb-2">Verifying...</h3>
+              <p className="text-neutral-light">Please wait while we verify your email address</p>
             </div>
           )}
 
-          {status === "loading" && (
-            <p className="text-sm text-neutral-light animate-pulse">
-              Please wait while we verify your email...
-            </p>
+          {status === "success" && (
+            <div>
+              <div className="w-16 h-16 bg-positive/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-positive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-neutral mb-2">Email Verified!</h3>
+              <p className="text-neutral-light">{message}</p>
+            </div>
+          )}
+
+          {status === "error" && (
+            <div>
+              <div className="w-16 h-16 bg-negative/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-negative" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-neutral mb-2">Verification Failed</h3>
+              <p className="text-neutral-light mb-6">{message}</p>
+              <Link
+                href="/auth/signup"
+                className="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                Try Again
+              </Link>
+            </div>
           )}
         </div>
+      </div>
 
-        <div className="pt-6 border-t border-gray-200">
-          <p className="text-sm text-neutral-light">
-            Need help?{" "}
-            <a href="mailto:support@wealthflow.com" className="text-primary hover:underline">
-              Contact Support
-            </a>
-          </p>
-        </div>
+      {/* Powered by Luminus footer */}
+      <div className="mt-8 text-center">
+        <p className="text-sm text-neutral-light">
+          Powered by{" "}
+          <span className="font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">
+            Luminus
+          </span>
+        </p>
       </div>
     </div>
   );
