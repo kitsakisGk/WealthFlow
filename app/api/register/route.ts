@@ -49,8 +49,8 @@ export async function POST(request: Request) {
       },
     });
 
-    // Send verification email
-    await sendVerificationEmail(email, verificationToken);
+    // Send verification email (DISABLED FOR NOW - Resend domain not verified)
+    // await sendVerificationEmail(email, verificationToken);
 
     return NextResponse.json(
       {
