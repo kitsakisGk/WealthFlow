@@ -55,7 +55,6 @@ export async function GET(request: Request) {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
       select: {
-        accountType: true,
         theme: true,
         language: true,
         currency: true,
