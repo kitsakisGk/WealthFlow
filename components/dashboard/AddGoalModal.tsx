@@ -100,6 +100,12 @@ export default function AddGoalModal({
               onChange={(e) =>
                 setFormData({ ...formData, targetAmount: e.target.value })
               }
+              onBlur={(e) => {
+                const val = parseFloat(e.target.value);
+                if (!isNaN(val)) {
+                  setFormData({ ...formData, targetAmount: val.toFixed(2) });
+                }
+              }}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="5000.00"
             />

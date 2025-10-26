@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -29,6 +30,7 @@ interface Goal {
 
 export default function Header() {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const { t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -36,6 +38,15 @@ export default function Header() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
   const notificationRef = useRef<HTMLDivElement>(null);
+
+  // Get user initials
+  const userName = session?.user?.name || "User";
+  const initials = userName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   // Get page title based on current route
   const getPageTitle = () => {
@@ -200,35 +211,32 @@ export default function Header() {
             )}
           </div>
 
-          <button className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
+          <button className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <div className="w-8 h-8 bg-positive rounded-full flex items-center justify-center text-white font-bold text-sm">
-              U
+              {initials}
             </div>
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Improved scrolling */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-primary">
+        <div className="md:hidden bg-primary max-h-[calc(100vh-80px)] overflow-y-auto">
           <nav className="px-2 pt-2 pb-3 space-y-1">
             <a href="/dashboard" className="block px-3 py-2 rounded-md text-white font-medium">
-              📊 Dashboard
+              📊 {t("dashboard")}
             </a>
             <a href="/dashboard/transactions" className="block px-3 py-2 rounded-md text-white/80 hover:text-white hover:bg-primary-light">
-              💰 Transactions
-            </a>
-            <a href="/dashboard/budgets" className="block px-3 py-2 rounded-md text-white/80 hover:text-white hover:bg-primary-light">
-              📈 Budgets
+              💰 {t("transactions")}
             </a>
             <a href="/dashboard/goals" className="block px-3 py-2 rounded-md text-white/80 hover:text-white hover:bg-primary-light">
-              🎯 Goals
+              🎯 {t("goals")}
             </a>
             <a href="/dashboard/reports" className="block px-3 py-2 rounded-md text-white/80 hover:text-white hover:bg-primary-light">
-              📄 Reports
+              📄 {t("reports")}
             </a>
             <a href="/dashboard/settings" className="block px-3 py-2 rounded-md text-white/80 hover:text-white hover:bg-primary-light">
-              ⚙️ Settings
+              ⚙️ {t("settings")}
             </a>
           </nav>
         </div>

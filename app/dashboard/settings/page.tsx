@@ -34,7 +34,7 @@ export default function SettingsPage() {
   const userName = session?.user?.name || "";
   const userEmail = session?.user?.email || "";
 
-  const handleUpgrade = async (selectedPlan: "PRO" | "BUSINESS" | "FREE") => {
+  const handleUpgrade = async (selectedPlan: "PRO" | "FREE") => {
     setUpgradingPlan(selectedPlan);
 
     try {
@@ -50,10 +50,6 @@ export default function SettingsPage() {
         PRO: {
           monthly: process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID || "price_1SKL3bF06obS6ynQWKJPUzjS",
           yearly: process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID || "price_1SKL7ZF06obS6ynQDveO8cFb",
-        },
-        BUSINESS: {
-          monthly: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_MONTHLY_PRICE_ID || "price_1SKL9WF06obS6ynQ43YIce8T",
-          yearly: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_YEARLY_PRICE_ID || "price_1SKLB6F06obS6ynQwZVSiKsQ",
         },
       };
 
@@ -287,8 +283,7 @@ export default function SettingsPage() {
             </p>
             <p className="text-sm text-neutral-light dark:text-gray-400 mt-1">
               {plan === "FREE" && t("upgradeUnlimited")}
-              {plan === "PRO" && `€4.99${t("perMonth")} - ${t("nextBillingDate")}: Nov 17, 2025`}
-              {plan === "BUSINESS" && `€19.99${t("perMonth")} - ${t("nextBillingDate")}: Nov 17, 2025`}
+              {plan === "PRO" && `€3.49${t("perMonth")} - ${t("nextBillingDate")}: Nov 17, 2025`}
             </p>
           </div>
           <div className="flex gap-2">
@@ -349,21 +344,22 @@ export default function SettingsPage() {
             >
               {t("yearly")}
               <span className="ml-2 text-xs bg-positive text-white px-2 py-0.5 rounded-full">
-                Save up to 75%
+                Save 34%
               </span>
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className={`border-2 rounded-lg p-4 ${plan === "FREE" ? "border-primary bg-primary/5 dark:bg-green-900/10" : "border-gray-200 dark:border-gray-600"}`}>
             <h3 className="font-bold text-neutral dark:text-gray-200 mb-2">{t("free")}</h3>
             <p className="text-2xl font-bold text-neutral dark:text-gray-200 mb-4">€0<span className="text-sm font-normal text-neutral-light dark:text-gray-400">{t("perMonth")}</span></p>
             <ul className="text-sm space-y-2 text-neutral dark:text-gray-300">
-              <li>✓ {t("oneTransaction")}</li>
-              <li>✓ {t("twoBudgets")}</li>
-              <li>✓ {t("oneGoal")}</li>
-              <li className="text-negative">✗ {t("noExport")}</li>
+              <li>✓ Up to 25 transactions</li>
+              <li>✓ Up to 5 recurring payments</li>
+              <li>✓ Up to 5 financial goals</li>
+              <li>✓ Basic reports & charts</li>
+              <li className="text-negative">✗ No export to PDF/Excel</li>
             </ul>
             {plan !== "FREE" && (
               <button
@@ -381,18 +377,19 @@ export default function SettingsPage() {
             <h3 className="font-bold text-neutral dark:text-gray-200 mb-2">{t("pro")}</h3>
             {billingPeriod === "monthly" ? (
               <p className="text-2xl font-bold text-neutral dark:text-gray-200 mb-4">
-                €4.99<span className="text-sm font-normal text-neutral-light dark:text-gray-400">{t("perMonth")}</span>
+                €3.49<span className="text-sm font-normal text-neutral-light dark:text-gray-400">{t("perMonth")}</span>
               </p>
             ) : (
               <p className="text-2xl font-bold text-neutral dark:text-gray-200 mb-4">
-                €29.99<span className="text-sm font-normal text-neutral-light dark:text-gray-400">{t("perYear")}</span>
+                €27.59<span className="text-sm font-normal text-neutral-light dark:text-gray-400">{t("perYear")}</span>
               </p>
             )}
             <ul className="text-sm space-y-2 text-neutral dark:text-gray-300">
-              <li>✓ {t("unlimitedTransactions")}</li>
-              <li>✓ {t("unlimitedBudgets")}</li>
-              <li>✓ {t("unlimitedGoals")}</li>
-              <li>✓ {t("exportReports")}</li>
+              <li>✓ Unlimited transactions</li>
+              <li>✓ Unlimited recurring payments</li>
+              <li>✓ Unlimited financial goals</li>
+              <li>✓ Advanced reports & charts</li>
+              <li>✓ Export to PDF/Excel</li>
             </ul>
             {plan !== "PRO" && (
               <button
@@ -400,33 +397,6 @@ export default function SettingsPage() {
                 disabled={upgradingPlan !== null}
                 className="mt-4 w-full bg-primary hover:bg-primary/90 text-white py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                 {upgradingPlan === "PRO" ? "Loading..." : t("upgradeToPro")}
-              </button>
-            )}
-          </div>
-
-          <div className={`border-2 rounded-lg p-4 ${plan === "BUSINESS" ? "border-primary bg-primary/5 dark:bg-green-900/10" : "border-gray-200 dark:border-gray-600"}`}>
-            <h3 className="font-bold text-neutral dark:text-gray-200 mb-2">{t("business")}</h3>
-            {billingPeriod === "monthly" ? (
-              <p className="text-2xl font-bold text-neutral dark:text-gray-200 mb-4">
-                €19.99<span className="text-sm font-normal text-neutral-light dark:text-gray-400">{t("perMonth")}</span>
-              </p>
-            ) : (
-              <p className="text-2xl font-bold text-neutral dark:text-gray-200 mb-4">
-                €59.99<span className="text-sm font-normal text-neutral-light dark:text-gray-400">{t("perYear")}</span>
-              </p>
-            )}
-            <ul className="text-sm space-y-2 text-neutral dark:text-gray-300">
-              <li>✓ {t("everythingInPro")}</li>
-              <li>✓ {t("businessTracking")}</li>
-              <li>✓ {t("taxCategorization")}</li>
-              <li>✓ {t("multiUser")}</li>
-            </ul>
-            {plan !== "BUSINESS" && (
-              <button
-                onClick={() => handleUpgrade("BUSINESS")}
-                disabled={upgradingPlan !== null}
-                className="mt-4 w-full bg-primary hover:bg-primary/90 text-white py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                {upgradingPlan === "BUSINESS" ? "Loading..." : t("upgradeToBusiness")}
               </button>
             )}
           </div>

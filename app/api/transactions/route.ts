@@ -44,10 +44,10 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { amount, description, category, type, date } = body;
+    const { amount, category, type, date, isRecurring, frequency, nextDate } = body;
 
     // Validate required fields
-    if (!amount || !description || !type) {
+    if (!amount || !category || !type) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -57,11 +57,13 @@ export async function POST(req: NextRequest) {
     const transaction = await prisma.transaction.create({
       data: {
         amount: parseFloat(amount),
-        description,
-        category: category || "Uncategorized",
+        category,
         type: type.toUpperCase(), // Convert to uppercase for enum
         date: date ? new Date(date) : new Date(),
         userId: session.user.id,
+        isRecurring: isRecurring || false,
+        frequency: frequency || null,
+        nextDate: nextDate ? new Date(nextDate) : null,
       },
     });
 

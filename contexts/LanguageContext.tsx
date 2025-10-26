@@ -49,6 +49,8 @@ const translations = {
     type: "Type",
     date: "Date",
     actions: "Actions",
+    recurringTransaction: "Recurring Transaction",
+    makeRecurring: "Make this transaction recurring (monthly)",
 
     // Budgets
     createBudget: "Create Budget",
@@ -94,6 +96,8 @@ const translations = {
     totalGoalAmount: "Total Goal Amount",
     totalSaved: "Total Saved",
     overallProgress: "Overall Progress",
+    progress: "Progress",
+    remainingAmount: "Remaining",
     deadline: "Deadline",
     timeRemaining: "Time Remaining",
     days: "days",
@@ -115,6 +119,10 @@ const translations = {
     ofTotalIncome: "Of total income",
     allTime: "All time",
     noAccountsYet: "No accounts yet",
+    spendingAlert: "Spending Alert: Highest Expense Category",
+    youreSpendingMostOn: "You're spending the most on",
+    at: "at",
+    ofTotalExpenses: "of total expenses",
 
     // Chart labels
     transactionTrends: "Transaction Trends",
@@ -310,6 +318,8 @@ const translations = {
     type: "Τύπος",
     date: "Ημερομηνία",
     actions: "Ενέργειες",
+    recurringTransaction: "Επαναλαμβανόμενη Συναλλαγή",
+    makeRecurring: "Κάντε αυτή τη συναλλαγή επαναλαμβανόμενη (μηνιαία)",
 
     // Budgets
     createBudget: "Δημιουργία Προϋπολογισμού",
@@ -355,6 +365,8 @@ const translations = {
     totalGoalAmount: "Συνολικό Ποσό Στόχου",
     totalSaved: "Συνολικά Αποταμιευμένα",
     overallProgress: "Συνολική Πρόοδος",
+    progress: "Πρόοδος",
+    remainingAmount: "Υπόλοιπο",
     deadline: "Προθεσμία",
     timeRemaining: "Υπολειπόμενος Χρόνος",
     days: "ημέρες",
@@ -376,6 +388,10 @@ const translations = {
     ofTotalIncome: "Του συνολικού εισοδήματος",
     allTime: "Όλοι οι χρόνοι",
     noAccountsYet: "Δεν υπάρχουν λογαριασμοί ακόμα",
+    spendingAlert: "Ειδοποίηση Δαπανών: Υψηλότερη Κατηγορία Εξόδων",
+    youreSpendingMostOn: "Ξοδεύετε τα περισσότερα σε",
+    at: "στα",
+    ofTotalExpenses: "των συνολικών εξόδων",
 
     // Chart labels
     transactionTrends: "Τάσεις Συναλλαγών",

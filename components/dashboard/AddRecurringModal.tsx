@@ -3,17 +3,17 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-interface AddTransactionModalProps {
+interface AddRecurringModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export default function AddTransactionModal({
+export default function AddRecurringModal({
   isOpen,
   onClose,
   onSuccess,
-}: AddTransactionModalProps) {
+}: AddRecurringModalProps) {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
@@ -21,9 +21,8 @@ export default function AddTransactionModal({
     amount: "",
     category: "",
     customCategory: "",
-    type: "expense" as "income" | "expense",
-    date: new Date().toISOString().split("T")[0],
-    isRecurring: false,
+    frequency: "monthly",
+    nextDate: new Date().toISOString().split("T")[0],
   });
 
   if (!isOpen) return null;
@@ -49,14 +48,16 @@ export default function AddTransactionModal({
         body: JSON.stringify({
           amount: formData.amount,
           category: finalCategory,
-          type: formData.type,
-          date: formData.date,
-          isRecurring: formData.isRecurring,
+          type: "expense",
+          date: formData.nextDate,
+          isRecurring: true,
+          frequency: formData.frequency,
+          nextDate: formData.nextDate,
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create transaction");
+        throw new Error("Failed to create recurring payment");
       }
 
       // Reset form
@@ -64,17 +65,16 @@ export default function AddTransactionModal({
         amount: "",
         category: "",
         customCategory: "",
-        type: "expense",
-        date: new Date().toISOString().split("T")[0],
-        isRecurring: false,
+        frequency: "monthly",
+        nextDate: new Date().toISOString().split("T")[0],
       });
       setShowCustomCategory(false);
 
       onSuccess();
       onClose();
     } catch (error) {
-      console.error("Error creating transaction:", error);
-      alert("Failed to create transaction. Please try again.");
+      console.error("Error creating recurring payment:", error);
+      alert("Failed to create recurring payment. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -84,7 +84,7 @@ export default function AddTransactionModal({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-neutral dark:text-gray-200">{t("addTransaction")}</h2>
+          <h2 className="text-xl font-bold text-neutral dark:text-gray-200">Add Recurring Payment</h2>
           <button
             onClick={onClose}
             className="text-neutral dark:text-gray-400 hover:text-neutral-dark dark:hover:text-gray-200"
@@ -94,36 +94,6 @@ export default function AddTransactionModal({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
-              {t("type")}
-            </label>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setFormData({ ...formData, type: "expense" })}
-                className={`flex-1 py-2 px-4 rounded-lg ${
-                  formData.type === "expense"
-                    ? "bg-negative text-white"
-                    : "bg-gray-200 dark:bg-gray-700 text-neutral dark:text-gray-300"
-                }`}
-              >
-                {t("expenses")}
-              </button>
-              <button
-                type="button"
-                onClick={() => setFormData({ ...formData, type: "income" })}
-                className={`flex-1 py-2 px-4 rounded-lg ${
-                  formData.type === "income"
-                    ? "bg-positive text-white"
-                    : "bg-gray-200 dark:bg-gray-700 text-neutral dark:text-gray-300"
-                }`}
-              >
-                {t("income")}
-              </button>
-            </div>
-          </div>
-
           <div>
             <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
               {t("amount")} (€)
@@ -161,14 +131,15 @@ export default function AddTransactionModal({
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
                   <option value="">{t("selectCategory")}</option>
-                  <option value="Food & Dining">{t("foodDining")}</option>
-                  <option value="Transportation">{t("transportation")}</option>
-                  <option value="Shopping">{t("shopping")}</option>
-                  <option value="Entertainment">{t("entertainment")}</option>
-                  <option value="Bills & Utilities">{t("billsUtilities")}</option>
-                  <option value="Healthcare">{t("healthcare")}</option>
-                  <option value="Salary">{t("salary")}</option>
-                  <option value="Business">{t("businessCategory")}</option>
+                  <option value="Rent">Rent</option>
+                  <option value="Utilities">Utilities</option>
+                  <option value="Internet">Internet</option>
+                  <option value="Phone">Phone</option>
+                  <option value="Subscriptions">Subscriptions</option>
+                  <option value="Insurance">Insurance</option>
+                  <option value="Loan Payment">Loan Payment</option>
+                  <option value="Gym Membership">Gym Membership</option>
+                  <option value="Streaming Services">Streaming Services</option>
                   <option value="Other">{t("other")}</option>
                 </select>
                 <button
@@ -206,32 +177,35 @@ export default function AddTransactionModal({
 
           <div>
             <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
-              {t("date")}
+              Frequency
+            </label>
+            <select
+              value={formData.frequency}
+              onChange={(e) =>
+                setFormData({ ...formData, frequency: e.target.value })
+              }
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent"
+            >
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-neutral dark:text-gray-300 mb-1">
+              Next Payment Date
             </label>
             <input
               type="date"
               required
-              value={formData.date}
+              value={formData.nextDate}
               onChange={(e) =>
-                setFormData({ ...formData, date: e.target.value })
+                setFormData({ ...formData, nextDate: e.target.value })
               }
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-neutral dark:text-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent"
             />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="isRecurring"
-              checked={formData.isRecurring}
-              onChange={(e) =>
-                setFormData({ ...formData, isRecurring: e.target.checked })
-              }
-              className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label htmlFor="isRecurring" className="text-sm font-medium text-neutral dark:text-gray-300">
-              {t("makeRecurring")}
-            </label>
           </div>
 
           <div className="flex gap-2 pt-4">
@@ -247,7 +221,7 @@ export default function AddTransactionModal({
               disabled={loading}
               className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark disabled:opacity-50"
             >
-              {loading ? t("adding") : t("addTransaction")}
+              {loading ? "Adding..." : "Add Recurring Payment"}
             </button>
           </div>
         </form>

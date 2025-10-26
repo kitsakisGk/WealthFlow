@@ -29,11 +29,8 @@ model User {
   updatedAt         DateTime  @updatedAt
 
   transactions      Transaction[]
-  monthlyBudgets    MonthlyBudget[]
-  subscriptions     Subscription[]
   goals             Goal[]
   categories        Category[]
-  bankAccounts      BankAccount[]
   activationTokens  ActivationToken[]
 
   @@map("users")
@@ -54,13 +51,11 @@ model ActivationToken {
 
 enum AccountType {
   PERSONAL
-  BUSINESS
 }
 
 enum Plan {
   FREE
   PRO
-  BUSINESS
 }
 
 model Transaction {
@@ -74,62 +69,23 @@ model Transaction {
   description String?
   date        DateTime
 
+  // Recurring payment fields
+  isRecurring Boolean  @default(false)
+  frequency   String?  // "monthly", "weekly", "yearly", "daily"
+  nextDate    DateTime?
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([userId])
   @@index([date])
+  @@index([isRecurring])
   @@map("transactions")
 }
 
 enum TransactionType {
   INCOME
   EXPENSE
-}
-
-model MonthlyBudget {
-  id                String   @id @default(cuid())
-  userId            String
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  month             String   // Format: "2025-10" for October 2025
-  plannedIncome     Float
-  plannedExpenses   Float
-  actualIncome      Float    @default(0)
-  actualExpenses    Float    @default(0)
-
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  @@unique([userId, month])
-  @@index([userId])
-  @@map("monthly_budgets")
-}
-
-model Subscription {
-  id              String   @id @default(cuid())
-  userId          String
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  name            String
-  amount          Float
-  billingCycle    BillingCycle
-  nextBillingDate DateTime
-  category        String
-  isActive        Boolean  @default(true)
-
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  @@index([userId])
-  @@index([nextBillingDate])
-  @@map("subscriptions")
-}
-
-enum BillingCycle {
-  WEEKLY
-  MONTHLY
-  YEARLY
 }
 
 model Goal {
@@ -166,22 +122,4 @@ model Category {
   @@unique([userId, name])
   @@index([userId])
   @@map("categories")
-}
-
-model BankAccount {
-  id            String   @id @default(cuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  bankName      String
-  accountType   String
-  balance       Float
-  accountNumber String?
-  color         String   @default("bg-blue-500")
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@index([userId])
-  @@map("bank_accounts")
 }
