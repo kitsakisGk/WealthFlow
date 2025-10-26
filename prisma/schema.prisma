@@ -15,7 +15,6 @@ model User {
   email             String    @unique
   name              String?
   password          String
-  accountType       AccountType @default(PERSONAL)
   plan              Plan      @default(FREE)
   theme             String    @default("light")
   language          String    @default("en")
@@ -47,10 +46,6 @@ model ActivationToken {
   @@index([userId])
   @@index([token])
   @@map("activation_tokens")
-}
-
-enum AccountType {
-  PERSONAL
 }
 
 enum Plan {

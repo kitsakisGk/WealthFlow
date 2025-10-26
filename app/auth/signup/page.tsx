@@ -15,7 +15,6 @@ export default function SignupPage() {
     email: "",
     password: "",
     confirmPassword: "",
-    accountType: "PERSONAL",
     plan: planParam.toUpperCase(),
   });
   const [error, setError] = useState("");
@@ -73,7 +72,6 @@ export default function SignupPage() {
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          accountType: formData.accountType,
           plan: formData.plan,
         }),
       });
@@ -158,22 +156,6 @@ export default function SignupPage() {
                 className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-neutral rounded-md focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                 placeholder="you@example.com"
               />
-            </div>
-
-            <div>
-              <label htmlFor="accountType" className="block text-sm font-medium text-neutral mb-1">
-                Account Type
-              </label>
-              <select
-                id="accountType"
-                name="accountType"
-                value={formData.accountType}
-                onChange={(e) => setFormData({ ...formData, accountType: e.target.value })}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-neutral rounded-md focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-              >
-                <option value="PERSONAL">Personal</option>
-                <option value="BUSINESS">Small Business</option>
-              </select>
             </div>
 
             <div>
