@@ -41,7 +41,7 @@ export async function POST(req: Request) {
           // Update user's plan in database
           await prisma.user.update({
             where: { id: userId },
-            data: { plan: plan as "FREE" | "PRO" | "BUSINESS" },
+            data: { plan: plan as "FREE" | "PRO" },
           });
         }
         break;
