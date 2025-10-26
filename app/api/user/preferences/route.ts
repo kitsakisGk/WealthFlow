@@ -29,7 +29,6 @@ export async function PUT(request: Request) {
     return NextResponse.json({
       success: true,
       preferences: {
-        accountType: user.accountType,
         theme: user.theme,
         language: user.language,
         currency: user.currency,
