@@ -15,10 +15,7 @@ export async function GET() {
       where: { email: session.user.email },
       include: {
         transactions: true,
-        monthlyBudgets: true,
-        subscriptions: true,
         goals: true,
-        bankAccounts: true,
       },
     });
 
