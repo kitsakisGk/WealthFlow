@@ -32,10 +32,7 @@ export async function GET() {
       user: userData,
       summary: {
         totalTransactions: user.transactions.length,
-        totalBudgets: user.monthlyBudgets.length,
-        totalSubscriptions: user.subscriptions.length,
         totalGoals: user.goals.length,
-        totalBankAccounts: user.bankAccounts.length,
       },
     };
 
