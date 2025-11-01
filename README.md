@@ -144,13 +144,6 @@ wealthflow-system/
 - Export to PDF/Excel
 - Priority support
 
-### Business Plan (€19.99/month or €59.99/year)
-- Everything in Pro
-- Business expense tracking
-- Custom categories
-- Priority support
-- Advanced reporting
-
 ## Stripe Setup
 
 1. Create a Stripe account at [stripe.com](https://stripe.com)
