@@ -1,3 +1,21 @@
+# WealthFlow
+
+<div align="center">
+
+## Modern Full-Stack Money Management System
+
+![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
+![Stripe](https://img.shields.io/badge/Stripe-Payments-008CDD?style=for-the-badge&logo=stripe&logoColor=white)
+
+**Author:** Georgios Kitsakis
+
+</div>
+
+---
+
 # WealthFlow System 💰
 
 A modern, full-featured money management system for individuals and small businesses. Track expenses, create budgets, set financial goals, and gain insights into your financial health.
